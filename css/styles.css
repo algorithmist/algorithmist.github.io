@@ -1,22 +1,25 @@
+:root {
+  --red: #e81c4f;
+  --h-kerning: 0.2em;
+  --max-width: 38em;
+}
+
+body {
+  margin: 0 auto;
+  max-width: var(--max-width);
+  font-family: "Arimo";
+  color: #555;
+}
+
 main {
-  max-width: 38rem;
   padding: 1.5rem;
   margin: auto;
   text-align: center;
 }
 
-body {
-  margin: 0 auto;
-  max-width: 50em;
-  font-family: "Arimo";
-  color: #555;
-  /* line-height: 1.5; */
-  /* padding: 4em 1em; */
-}
-
 header {
   margin: 0 auto;
-  max-width: 50em;
+  max-width: var(--max-width);
   text-align: center;
 }
 
@@ -32,8 +35,6 @@ h5,
 h6 {
   font-family: "Raleway";
   color: #333;
-  /* margin-top: 1em; */
-  /* padding-top: 1em; */
 }
 
 code,
@@ -56,18 +57,32 @@ header h1 {
 }
 
 a {
-  color: #e81c4f;
-  border: 1px solid #e81c4f;
-  font-size: 0.6em;
-  letter-spacing: 0.2em;
-  padding: 1em 2em;
+  color: var(--red);
   text-transform: uppercase;
   text-decoration: none;
+}
+
+nav a {
+  border: 1px solid var(--red);
+  font-size: 0.6em;
+  letter-spacing: var(--h-kerning);
+  padding: 1em 2em;
   transition: none 200ms ease-out;
   transition-property: color, background;
 }
 
-a:hover {
-  background: #e81c4f;
+nav a:hover, nav a:focus, .post a:focus {
+  background: var(--red);
   color: white;
+}
+
+.post {
+  letter-spacing: var(--h-kerning);
+  border: 1px solid var(--red);
+  padding: 1em 1em;
+}
+
+.post a {
+  border-bottom: 1px solid var(--red);
+  text-transform: uppercase;
 }
