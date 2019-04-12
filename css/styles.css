@@ -8,9 +8,10 @@ main {
 body {
   margin: 0 auto;
   max-width: 50em;
-  font-family: "Cormorant Garamond";
-  line-height: 1.5;
-  padding: 4em 1em;
+  font-family: "Arimo";
+  color: #555;
+  /* line-height: 1.5; */
+  /* padding: 4em 1em; */
 }
 
 header {
@@ -19,7 +20,7 @@ header {
   text-align: center;
 }
 
-header > h1 {
+header h1 {
   font-size: 3em;
 }
 
@@ -30,6 +31,43 @@ h4,
 h5,
 h6 {
   font-family: "Raleway";
+  color: #333;
   /* margin-top: 1em; */
   /* padding-top: 1em; */
+}
+
+code,
+pre {
+  background: #eee;
+}
+
+code {
+  padding: 2px 4px;
+  vertical-align: text-bottom;
+}
+
+pre {
+  padding: 1em;
+}
+
+header h1 {
+  font-size: 2.5em;
+  font-weight: 300;
+}
+
+a {
+  color: #e81c4f;
+  border: 1px solid #e81c4f;
+  font-size: 0.6em;
+  letter-spacing: 0.2em;
+  padding: 1em 2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: none 200ms ease-out;
+  transition-property: color, background;
+}
+
+a:hover {
+  background: #e81c4f;
+  color: white;
 }
