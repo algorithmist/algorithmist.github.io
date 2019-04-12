@@ -58,7 +58,6 @@ header h1 {
 
 a {
   color: var(--red);
-  text-transform: uppercase;
   text-decoration: none;
 }
 
@@ -72,6 +71,7 @@ nav a {
   letter-spacing: var(--h-kerning);
   padding: 1em 2em;
   transition-property: color, background;
+  text-transform: uppercase;
 }
 
 nav a:hover, nav a:focus, .post a:hover, .post a:focus {
