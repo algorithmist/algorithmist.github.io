@@ -1,13 +1,35 @@
 main {
   max-width: 38rem;
-  padding: 2rem;
+  padding: 1.5rem;
   margin: auto;
+  text-align: center;
 }
 
-* {
-  font-family: "EB Garamond"
+body {
+  margin: 0 auto;
+  max-width: 50em;
+  font-family: "Cormorant Garamond";
+  line-height: 1.5;
+  padding: 4em 1em;
 }
 
-h1,h2,h3,h4,h5,h6 {
-  font-family: "Raleway"
+header {
+  margin: 0 auto;
+  max-width: 50em;
+  text-align: center;
+}
+
+header > h1 {
+  font-size: 3em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Raleway";
+  /* margin-top: 1em; */
+  /* padding-top: 1em; */
 }
