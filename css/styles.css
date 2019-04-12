@@ -71,7 +71,6 @@ nav a {
   font-size: 0.6em;
   letter-spacing: var(--h-kerning);
   padding: 1em 2em;
-  transition: none 200ms ease-out;
   transition-property: color, background;
 }
 
