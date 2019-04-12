@@ -86,7 +86,13 @@ nav a:focus {
   padding: 1em 1em;
 }
 
-.post a {
-  border-bottom: 1px solid var(--red);
+.post h2 {
   text-transform: uppercase;
+}
+
+.post:hover,
+.post:hover h2,
+.post:hover h3 {
+  background: var(--red);
+  color: white;
 }
