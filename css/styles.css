@@ -1,3 +1,4 @@
+/* Base styles */
 :root {
   --red: #e81c4f;
   --h-kerning: 0.2em;
@@ -61,6 +62,7 @@ a {
   text-decoration: none;
 }
 
+/* Nav styles */
 nav {
   line-height: 3em;
 }
@@ -80,6 +82,7 @@ nav a:focus {
   color: white;
 }
 
+/* Post blurb styles */
 .post {
   letter-spacing: var(--h-kerning);
   border: 1px solid var(--red);
