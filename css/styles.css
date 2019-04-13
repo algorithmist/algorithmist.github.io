@@ -87,6 +87,7 @@ nav a:focus {
   letter-spacing: var(--h-kerning);
   border: 1px solid var(--red);
   padding: 1em 1em;
+  margin: 1.5em 0em;
 }
 
 .post h2 {
