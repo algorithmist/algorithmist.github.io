@@ -4,6 +4,7 @@ from typing import List
 
 import argparse
 import glob
+import itertools
 import logging
 import os
 import subprocess
@@ -33,7 +34,8 @@ def GenerateHtml(pandoc_flags: List[str], html_dir: str, post_paths: List[str]):
     file_name = os.path.splitext(os.path.basename(post_path))[0]
     output_path = os.path.join(html_dir, file_name + '.html')
     logging.info('Reading from %s\nWriting to %s', post_path, output_path)
-    args = ['pandoc', '-s'] + pandoc_flags + [post_path, '-o', output_path]
+    args = ['pandoc', '-s', '-H', 'header.html'
+           ] + pandoc_flags + [post_path, '-o', output_path]
     run(*args)
 
 
@@ -60,15 +62,22 @@ def ParseArgs():
   return parser.parse_args()
 
 
+def IsRootDir():
+  root_dir = run('git', 'rev-parse', '--show-toplevel').stdout.strip()
+  return root_dir == os.getcwd()
+
+
 def main():
   args = ParseArgs()
   logger.root.setLevel(LOGGING_LEVELS[args.log_level])
-  root_dir = run('git', 'rev-parse', '--show-toplevel').stdout.strip()
-  post_dir = os.path.join(root_dir, args.posts)
-  post_paths = glob.iglob(os.path.join(post_dir, '*.md'))
-  html_dir = os.path.join(root_dir, args.html)
+  if not IsRootDir():
+    logging.error('Must be run from the root git directory')
+    return
+  post_paths = itertools.chain(
+    glob.iglob(os.path.join('docs', '*.md')),
+    glob.iglob(os.path.join(args.posts, '*.md')))
   pandoc_flags = [arg for arg in args.pandoc_flags.split(' ') if arg]
-  GenerateHtml(pandoc_flags, html_dir, post_paths)
+  GenerateHtml(pandoc_flags, args.html, post_paths)
 
 
 if __name__ == '__main__':
