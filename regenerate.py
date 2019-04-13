@@ -48,6 +48,11 @@ def ParseArgs():
     default='algos',
     help='directory relative to the repo root')
   parser.add_argument(
+    '--docs',
+    type=str,
+    default='docs',
+    help='directory relative to the repo root')
+  parser.add_argument(
     '--html',
     type=str,
     default='html',
@@ -74,7 +79,7 @@ def main():
     logging.error('Must be run from the root git directory')
     return
   post_paths = itertools.chain(
-    glob.iglob(os.path.join('docs', '*.md')),
+    glob.iglob(os.path.join(args.docs, '*.md')),
     glob.iglob(os.path.join(args.posts, '*.md')))
   pandoc_flags = [arg for arg in args.pandoc_flags.split(' ') if arg]
   GenerateHtml(pandoc_flags, args.html, post_paths)
