@@ -22,6 +22,8 @@ DEFAULT_PANDOC_FLAGS = [
   '-s',
   '-H',
   'header.html',
+  '-B',
+  'title.html',
 ]
 
 
