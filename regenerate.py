@@ -18,6 +18,11 @@ LOGGING_LEVELS = {
   'ERROR': logging.ERROR,
   'CRITICAL': logging.CRITICAL,
 }
+DEFAULT_PANDOC_FLAGS = [
+  '-s',
+  '-H',
+  'header.html',
+]
 
 
 def run(*args) -> str:
@@ -28,15 +33,24 @@ def run(*args) -> str:
   return result
 
 
-def GenerateHtml(pandoc_flags: List[str], html_dir: str, post_paths: List[str]):
+def GenerateHtml(pandoc_flags: List[str], doc_paths: List[str],
+                 post_paths: List[str]):
   # TODO: Process multiple files concurrently.
-  for post_path in post_paths:
-    file_name = os.path.splitext(os.path.basename(post_path))[0]
-    output_path = os.path.join(html_dir, file_name + '.html')
-    logging.info('Reading from %s\nWriting to %s', post_path, output_path)
-    args = ['pandoc', '-s', '-H', 'header.html'
-           ] + pandoc_flags + [post_path, '-o', output_path]
+  def output(input_path, output_path):
+    logging.info('Reading from %s\nWriting to %s', input_path, output_path)
+    args = (['pandoc'] + DEFAULT_PANDOC_FLAGS + pandoc_flags +
+            [input_path, '-o', output_path])
     run(*args)
+
+  for post_path in post_paths:
+    output_dir = os.path.splitext(post_path)[0]
+    if not os.path.exists(output_dir):
+      os.mkdir(output_dir)
+    output_path = os.path.join(output_dir, 'index.html')
+    output(post_path, output_path)
+  for doc_path in doc_paths:
+    output_path = os.path.basename(doc_path)[:-2] + 'html'
+    output(doc_path, output_path)
 
 
 def ParseArgs():
@@ -51,11 +65,6 @@ def ParseArgs():
     '--docs',
     type=str,
     default='docs',
-    help='directory relative to the repo root')
-  parser.add_argument(
-    '--html',
-    type=str,
-    default='html',
     help='directory relative to the repo root')
   parser.add_argument(
     '--pandoc_flags', type=str, default='', help='passed verbatim to pandoc')
@@ -78,11 +87,10 @@ def main():
   if not IsRootDir():
     logging.error('Must be run from the root git directory')
     return
-  post_paths = itertools.chain(
-    glob.iglob(os.path.join(args.docs, '*.md')),
-    glob.iglob(os.path.join(args.posts, '*.md')))
+  doc_paths = glob.iglob(os.path.join(args.docs, '*.md'))
+  post_paths = glob.iglob(os.path.join(args.posts, '*.md'))
   pandoc_flags = [arg for arg in args.pandoc_flags.split(' ') if arg]
-  GenerateHtml(pandoc_flags, args.html, post_paths)
+  GenerateHtml(pandoc_flags, doc_paths, post_paths)
 
 
 if __name__ == '__main__':
