@@ -1,0 +1,102 @@
+/* Base styles */
+:root {
+  --red: #e81c4f;
+  --h-kerning: 0.2em;
+  --max-width: 38em;
+}
+
+body {
+  margin: 0 auto;
+  max-width: var(--max-width);
+  font-family: "Arimo";
+  color: #555;
+}
+
+main {
+  padding: 1.5rem;
+  margin: auto;
+  text-align: center;
+}
+
+header {
+  margin: 0 auto;
+  max-width: var(--max-width);
+  text-align: center;
+}
+
+header h1 {
+  font-size: 3em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Raleway";
+  color: #333;
+}
+
+code,
+pre {
+  background: #eee;
+}
+
+code {
+  padding: 2px 4px;
+  vertical-align: text-bottom;
+}
+
+pre {
+  padding: 1em;
+}
+
+header h1 {
+  font-size: 2.5em;
+  font-weight: 300;
+}
+
+a {
+  color: var(--red);
+  text-decoration: none;
+}
+
+/* Nav styles */
+nav {
+  line-height: 3em;
+}
+
+nav a {
+  border: 1px solid var(--red);
+  font-size: 0.6em;
+  letter-spacing: var(--h-kerning);
+  padding: 1em 2em;
+  transition-property: color, background;
+  text-transform: uppercase;
+}
+
+nav a:hover,
+nav a:focus {
+  background: var(--red);
+  color: white;
+}
+
+/* Post blurb styles */
+.post {
+  letter-spacing: var(--h-kerning);
+  border: 1px solid var(--red);
+  padding: 1em 1em;
+  margin: 1.5em 0em;
+}
+
+.post h2 {
+  text-transform: uppercase;
+}
+
+.post:hover,
+.post:hover h2,
+.post:hover h3 {
+  background: var(--red);
+  color: white;
+}
