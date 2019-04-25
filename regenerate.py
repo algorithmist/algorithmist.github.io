@@ -10,12 +10,12 @@ import subprocess
 
 logger = logging.getLogger(__name__)
 LOGGING_LEVELS = {
-  'NOTSET': logging.NOTSET,
-  'DEBUG': logging.DEBUG,
-  'INFO': logging.INFO,
-  'WARNING': logging.WARNING,
-  'ERROR': logging.ERROR,
-  'CRITICAL': logging.CRITICAL,
+    'NOTSET': logging.NOTSET,
+    'DEBUG': logging.DEBUG,
+    'INFO': logging.INFO,
+    'WARNING': logging.WARNING,
+    'ERROR': logging.ERROR,
+    'CRITICAL': logging.CRITICAL,
 }
 DEFAULT_PANDOC_FLAGS = [
     '-s',
@@ -27,8 +27,7 @@ DEFAULT_PANDOC_FLAGS = [
 
 def run(*args) -> str:
   logging.debug('Running command: %s', args)
-  result = subprocess.run(
-    args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
+  result = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
   logging.debug('\nStdout: %s\nStderr: %s', result.stdout, result.stderr)
   return result
 
