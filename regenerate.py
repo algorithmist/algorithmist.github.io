@@ -4,7 +4,6 @@ from typing import List
 
 import argparse
 import glob
-import itertools
 import logging
 import os
 import subprocess
