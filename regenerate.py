@@ -47,7 +47,7 @@ def GenerateHtml(pandoc_flags: List[str], doc_paths: List[str],
   for post_path in post_paths:
     output_dir = os.path.join(site_root, os.path.splitext(post_path)[0])
     if not os.path.exists(output_dir):
-      os.mkdir(output_dir)
+      os.makedirs(output_dir)
     output_path = os.path.join(output_dir, 'index.html')
     output(post_path, output_path)
   for doc_path in doc_paths:
