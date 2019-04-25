@@ -1,3 +1,7 @@
+---
+title: About
+...
+
 Welcome to the Algorithmist, a community-created resource dedicated to explaining algorithms and
 data structures not typically covered in undergraduate computer science courses. Interested in
 contributing? Please take a look at [our guidelines]!

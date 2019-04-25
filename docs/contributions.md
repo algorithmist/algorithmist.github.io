@@ -1,4 +1,6 @@
-# Contributions
+---
+title: Contributions
+...
 
 <!-- TODO: Add a nav bar -->
 
