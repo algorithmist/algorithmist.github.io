@@ -18,11 +18,10 @@ LOGGING_LEVELS = {
   'CRITICAL': logging.CRITICAL,
 }
 DEFAULT_PANDOC_FLAGS = [
-  '-s',
-  '-H',
-  'header.html',
-  '-B',
-  'title.html',
+    '-s',
+    '--template=template.html',
+    '--base-header-level=2',
+    '--katex',
 ]
 
 
