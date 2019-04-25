@@ -96,7 +96,7 @@ def main():
   doc_paths = glob.iglob(os.path.join(args.docs, '*.md'))
   post_paths = glob.iglob(os.path.join(args.posts, '*.md'))
   pandoc_flags = [arg for arg in args.pandoc_flags.split(' ') if arg]
-  GenerateHtml(pandoc_flags, doc_paths, post_paths, args.build_dir)
+  GenerateHtml(pandoc_flags, doc_paths, post_paths, args.site_root)
 
 
 if __name__ == '__main__':
