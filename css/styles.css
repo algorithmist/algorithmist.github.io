@@ -18,6 +18,10 @@ main {
   text-align: center;
 }
 
+.article-content {
+  text-align: left;
+}
+
 header {
   margin: 0 auto;
   max-width: var(--max-width);
@@ -59,7 +63,7 @@ header h1 {
 
 a {
   color: var(--red);
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 /* Nav styles */
@@ -74,6 +78,7 @@ nav a {
   padding: 1em 2em;
   transition-property: color, background;
   text-transform: uppercase;
+  text-decoration: none;
 }
 
 nav a:hover,
