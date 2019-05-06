@@ -28,8 +28,10 @@ DEFAULT_PANDOC_FLAGS = [
 
 def run(*args) -> str:
   logging.debug('Running command: %s', args)
-  result = subprocess.run(
-    args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
+  result = subprocess.run(args,
+                          stdout=subprocess.PIPE,
+                          stderr=subprocess.PIPE,
+                          encoding='utf-8')
   logging.debug('\nStdout: %s\nStderr: %s', result.stdout, result.stderr)
   return result
 
@@ -65,33 +67,30 @@ def CopyCss(css_dir: str, site_root: str):
 def ParseArgs():
   parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-  parser.add_argument(
-    '--posts',
-    type=str,
-    default='algos',
-    help='directory relative to the repo root')
-  parser.add_argument(
-    '--docs',
-    type=str,
-    default='docs',
-    help='directory relative to the repo root')
-  parser.add_argument(
-    '--css',
-    type=str,
-    default='css',
-    help='directory relative to the repo root')
-  parser.add_argument(
-    '--site_root',
-    type=str,
-    default='build',
-    help='output dir, relative to the repo root')
-  parser.add_argument(
-    '--pandoc_flags', type=str, default='', help='passed verbatim to pandoc')
-  parser.add_argument(
-    '--log_level',
-    type=str,
-    help='controls the script\'s logging level',
-    default='ERROR')
+  parser.add_argument('--posts',
+                      type=str,
+                      default='algos',
+                      help='directory relative to the repo root')
+  parser.add_argument('--docs',
+                      type=str,
+                      default='docs',
+                      help='directory relative to the repo root')
+  parser.add_argument('--css',
+                      type=str,
+                      default='css',
+                      help='directory relative to the repo root')
+  parser.add_argument('--site_root',
+                      type=str,
+                      default='build',
+                      help='output dir, relative to the repo root')
+  parser.add_argument('--pandoc_flags',
+                      type=str,
+                      default='',
+                      help='passed verbatim to pandoc')
+  parser.add_argument('--log_level',
+                      type=str,
+                      help='controls the script\'s logging level',
+                      default='ERROR')
   return parser.parse_args()
 
 
