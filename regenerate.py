@@ -6,6 +6,7 @@ import argparse
 import glob
 import logging
 import os
+import shutil
 import subprocess
 
 logger = logging.getLogger(__name__)
@@ -46,14 +47,21 @@ def GenerateHtml(pandoc_flags: List[str], doc_paths: List[str],
 
   for post_path in post_paths:
     output_dir = os.path.join(site_root, os.path.splitext(post_path)[0])
-    if not os.path.exists(output_dir):
-      os.makedirs(output_dir)
+    os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, 'index.html')
     output(post_path, output_path)
   for doc_path in doc_paths:
     output_path = os.path.join(site_root,
                                os.path.basename(doc_path)[:-2] + 'html')
     output(doc_path, output_path)
+
+
+def CopyCss(css_dir: str, site_root: str):
+  output_dir = os.path.join(site_root, css_dir)
+  os.makedirs(output_dir, exist_ok=True)
+  input_files = glob.iglob(os.path.join(css_dir, '*.css'))
+  for input_file in input_files:
+    shutil.copy2(input_file, output_dir)
 
 
 def ParseArgs():
@@ -66,6 +74,10 @@ def ParseArgs():
   parser.add_argument('--docs',
                       type=str,
                       default='docs',
+                      help='directory relative to the repo root')
+  parser.add_argument('--css',
+                      type=str,
+                      default='css',
                       help='directory relative to the repo root')
   parser.add_argument('--site_root',
                       type=str,
@@ -97,6 +109,7 @@ def main():
   post_paths = glob.iglob(os.path.join(args.posts, '*.md'))
   pandoc_flags = [arg for arg in args.pandoc_flags.split(' ') if arg]
   GenerateHtml(pandoc_flags, doc_paths, post_paths, args.site_root)
+  CopyCss(args.css, args.site_root)
 
 
 if __name__ == '__main__':
