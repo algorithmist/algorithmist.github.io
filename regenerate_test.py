@@ -12,15 +12,12 @@ class TestRegenerate(unittest.TestCase):
   def test_CopyFiles(self, mock_copy2, mock_iglob, _):
     input_dir = 'a/b/c'
     site_root = 'build'
-    mock_iglob.return_value = [
-      os.path.join(input_dir, 'foo.md'),
-      os.path.join(input_dir, 'bar.md')
-    ]
+    mock_iglob.return_value = ['a/b/c/foo.md', 'a/b/c/bar.md']
     regenerate.CopyFiles(input_dir, site_root, '*.md')
     mock_iglob.assert_called_with(os.path.join(input_dir, '*.md'))
     mock_copy2.assert_has_calls([
-      unittest.mock.call(input_file, os.path.join(site_root, input_dir))
-      for input_file in mock_iglob.return_value
+      unittest.mock.call('a/b/c/foo.md', 'build/a/b/c'),
+      unittest.mock.call('a/b/c/bar.md', 'build/a/b/c'),
     ])
 
   @unittest.mock.patch('regenerate.OutputHtml')
@@ -40,9 +37,32 @@ class TestRegenerate(unittest.TestCase):
   @unittest.mock.patch('shutil.copy2')
   def test_GeneratePosts(self, mock_copy2, mock_iglob, _, mock_output):
     site_root = 'build'
-    post_dirs = []
     pandoc_flags = 'pandoc_flags'
+    dir_foo = unittest.mock.MagicMock()
+    dir_foo.name = 'foo'
+    dir_foo.path = 'algos/foo'
+    dir_bar = unittest.mock.MagicMock()
+    dir_bar.name = 'bar'
+    dir_bar.path = 'algos/bar'
+    post_dirs = [dir_foo, dir_bar]
+    mocked_files = {
+      'algos/foo/*': [
+        'algos/foo/a.md',
+        'algos/foo/b.md',
+      ],
+      'algos/bar/*': [
+        'algos/bar/c.js',
+        'algos/bar/d.md',
+      ]
+    }
+    mock_iglob.side_effect = lambda args: mocked_files[args]
     regenerate.GeneratePosts(site_root, post_dirs, pandoc_flags)
+    mock_output.assert_has_calls([
+      unittest.mock.call('algos/foo/a.md', 'build/foo/a.html', pandoc_flags),
+      unittest.mock.call('algos/foo/b.md', 'build/foo/b.html', pandoc_flags),
+      unittest.mock.call('algos/bar/d.md', 'build/bar/d.html', pandoc_flags),
+    ])
+    mock_copy2.assert_called_once_with('algos/bar/c.js', 'build/bar/c.js')
 
 
 if __name__ == '__main__':

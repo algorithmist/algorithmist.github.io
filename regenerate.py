@@ -59,11 +59,11 @@ def GeneratePosts(site_root: str, post_dirs: Iterator[os.DirEntry],
     output_dir = os.path.join(site_root, post_dir.name)
     os.makedirs(output_dir, exist_ok=True)
     # Compile all the markdown to html. Copy everything else.
-    post_files = os.iglob(os.path.join(post_dir, '*'))
+    post_files = glob.iglob(os.path.join(post_dir.path, '*'))
     for input_path in post_files:
-      (name, ext) = os.splitext(os.path.basename(input_path))
+      (name, ext) = os.path.splitext(os.path.basename(input_path))
       output_path = os.path.join(output_dir, name)
-      if ext == '.html':
+      if ext == '.md':
         OutputHtml(input_path, output_path + '.html', pandoc_flags)
       else:
         shutil.copy2(input_path, output_path + ext)
