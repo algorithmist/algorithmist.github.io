@@ -4,7 +4,6 @@ from typing import List, Iterator
 
 import argparse
 import glob
-import itertools
 import logging
 import os
 import shutil
@@ -92,10 +91,6 @@ def ParseArgs():
                       type=str,
                       default='css',
                       help='directory relative to the repo root')
-  parser.add_argument('--js',
-                      type=str,
-                      default='js',
-                      help='directory relative to the repo root')
   parser.add_argument('--site_root',
                       type=str,
                       default='build',
@@ -131,13 +126,10 @@ def main():
   GenerateDocs(args.site_root, doc_paths, pandoc_flags)
   # Copy css into site_root/css
   CopyFiles(args.css, args.site_root, '*.css')
-  # Copy js into site_root/js
-  CopyFiles(args.js, args.site_root, '*.js')
 
 
 if __name__ == '__main__':
   try:
-    pass
-    #main()
+    main()
   except subprocess.CalledProcessError as err:
     print(err.stderr)
