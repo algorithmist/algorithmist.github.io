@@ -3,7 +3,7 @@
     <meta charset="utf-8">
     <script src="https://d3js.org/d3.v5.js"></script>
     <script src="https://dagrejs.github.io/project/dagre-d3/latest/dagre-d3.min.js"></script>
-    <script src="render.js"></script>
+    <script src="trie.js"></script>
   <style>
     .node {
       stroke: #000000;
@@ -14,6 +14,9 @@
     }
     .node-keyword {
       stroke: #ff0000;
+    }
+    .node-cursor {
+      stroke-width: 1.5px;
     }
     .edgePath {
       stroke: #000000;
@@ -27,15 +30,56 @@
   </style>
   </head>
   <body>
-  <svg id="test1" width=960 height=600></svg>
+  <div id="test1">
+    <svg width="30em" height="18em"><g></g></svg>
+    <form onsubmit="return false">
+      <input type="text" autocomplete="off" id="keyword_text"></br>
+      <span id="asdf3"></span>
+    </form>
+  </div>
 <script>
-
 var trie = new Trie();
-trie.addWord('abb');
-trie.addWord('abc');
-trie.addWord('abed');
-renderTrie(trie, "#test1");
+var cursor = trie;
 
+trie.renderTo("#test1", cursor);
+var keyword_text = document.getElementById("keyword_text");
+keyword_text.addEventListener("keydown", function(event) {
+  var isAscii =
+    (65 <= event.keyCode && event.keyCode <= 90) ||
+    (48 <= event.keyCode && event.keyCode <= 57);
+  var isBackspace = event.keyCode == 8;
+  var isEnter = event.keyCode == 13;
+  if (!(isAscii || isBackspace || isEnter)) {
+    // Prevent the character from appearing in the text box.
+    event.preventDefault();
+  }
+  return isAscii;
+});
+keyword_text.addEventListener("keyup", function(event) {
+  console.log(event.keyCode);
+  var isAscii =
+    (65 <= event.keyCode && event.keyCode <= 90) ||
+    (48 <= event.keyCode && event.keyCode <= 57);
+  var isBackspace = event.keyCode == 8;
+  var isEnter = event.keyCode == 13;
+  console.log(isAscii);
+  if (isEnter) {
+    event.preventDefault();
+    var span = document.getElementById("asdf3");
+    var text = document.getElementById("keyword_text");
+    span.innerHTML += " " + text.value;
+    text.value = "";
+    cursor.completeWord();
+    cursor = trie;
+  } else if (isAscii) {
+    cursor = cursor.addCharacter(String.fromCharCode(event.keyCode));
+  } else if (isBackspace) {
+    cursor = cursor.pop();
+  } else {
+    return;
+  }
+  trie.renderTo("#test1", cursor);
+});
 </script>
   </body>
 </html>
