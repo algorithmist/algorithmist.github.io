@@ -61,6 +61,8 @@ def GeneratePosts(site_root: str, post_dirs: Iterator[os.DirEntry],
     post_files = glob.iglob(os.path.join(post_dir.path, '*'))
     for input_path in post_files:
       (name, ext) = os.path.splitext(os.path.basename(input_path))
+      if name.endswith('test'):
+        continue
       output_path = os.path.join(output_dir, name)
       if ext == '.md':
         OutputHtml(input_path, output_path + '.html', pandoc_flags)
