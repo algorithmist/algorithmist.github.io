@@ -34,7 +34,7 @@
     <svg width="30em" height="18em"><g></g></svg>
     <form onsubmit="return false">
       <input type="text" autocomplete="off" id="keyword_text"></br>
-      <span id="asdf3"></span>
+      <span id="keyword_span"></span>
     </form>
   </div>
 <script>
@@ -62,10 +62,9 @@ keyword_text.addEventListener("keyup", function(event) {
     (48 <= event.keyCode && event.keyCode <= 57);
   var isBackspace = event.keyCode == 8;
   var isEnter = event.keyCode == 13;
-  console.log(isAscii);
   if (isEnter) {
     event.preventDefault();
-    var span = document.getElementById("asdf3");
+    var span = document.getElementById("keyword_span");
     var text = document.getElementById("keyword_text");
     span.innerHTML += " " + text.value;
     text.value = "";
