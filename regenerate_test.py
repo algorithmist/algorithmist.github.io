@@ -52,6 +52,8 @@ class TestRegenerate(unittest.TestCase):
       ],
       'algos/bar/*': [
         'algos/bar/c.js',
+        'algos/bar/c_test.js',
+        'algos/bar/c.test.js',
         'algos/bar/d.md',
       ]
     }
