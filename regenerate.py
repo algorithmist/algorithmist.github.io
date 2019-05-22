@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from typing import List
+from typing import List, Iterator
 
 import argparse
 import glob
@@ -36,30 +36,44 @@ def run(*args) -> str:
   return result
 
 
-def GenerateHtml(pandoc_flags: List[str], doc_paths: List[str],
-                 post_paths: List[str], site_root: str):
+def OutputHtml(input_path, output_path, pandoc_flags):
   # TODO: Process multiple files concurrently.
-  def output(input_path, output_path):
-    logging.info('Reading from %s\nWriting to %s', input_path, output_path)
-    args = (['pandoc'] + DEFAULT_PANDOC_FLAGS + pandoc_flags +
-            [input_path, '-o', output_path])
-    run(*args)
+  logging.info('Reading from %s\nWriting to %s', input_path, output_path)
+  args = (['pandoc'] + DEFAULT_PANDOC_FLAGS + pandoc_flags +
+          [input_path, '-o', output_path])
+  run(*args)
 
-  for post_path in post_paths:
-    output_dir = os.path.join(site_root, os.path.splitext(post_path)[0])
-    os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, 'index.html')
-    output(post_path, output_path)
+
+def GenerateDocs(site_root: str, doc_paths: Iterator[str],
+                 pandoc_flags: List[str]):
   for doc_path in doc_paths:
     output_path = os.path.join(site_root,
                                os.path.basename(doc_path)[:-2] + 'html')
-    output(doc_path, output_path)
+    OutputHtml(doc_path, output_path, pandoc_flags)
 
 
-def CopyCss(css_dir: str, site_root: str):
-  output_dir = os.path.join(site_root, css_dir)
+def GeneratePosts(site_root: str, post_dirs: Iterator[os.DirEntry],
+                  pandoc_flags: List[str]):
+  for post_dir in post_dirs:
+    output_dir = os.path.join(site_root, post_dir.name)
+    os.makedirs(output_dir, exist_ok=True)
+    # Compile all the markdown to html. Copy everything else.
+    post_files = glob.iglob(os.path.join(post_dir.path, '*'))
+    for input_path in post_files:
+      (name, ext) = os.path.splitext(os.path.basename(input_path))
+      if name.endswith('test'):
+        continue
+      output_path = os.path.join(output_dir, name)
+      if ext == '.md':
+        OutputHtml(input_path, output_path + '.html', pandoc_flags)
+      else:
+        shutil.copy2(input_path, output_path + ext)
+
+
+def CopyFiles(input_dir: str, site_root: str, glob_expr: str):
+  output_dir = os.path.join(site_root, input_dir)
   os.makedirs(output_dir, exist_ok=True)
-  input_files = glob.iglob(os.path.join(css_dir, '*.css'))
+  input_files = glob.iglob(os.path.join(input_dir, glob_expr))
   for input_file in input_files:
     shutil.copy2(input_file, output_dir)
 
@@ -105,11 +119,15 @@ def main():
   if not IsRootDir():
     logging.error('Must be run from the root git directory')
     return
-  doc_paths = glob.iglob(os.path.join(args.docs, '*.md'))
-  post_paths = glob.iglob(os.path.join(args.posts, '*.md'))
   pandoc_flags = [arg for arg in args.pandoc_flags.split(' ') if arg]
-  GenerateHtml(pandoc_flags, doc_paths, post_paths, args.site_root)
-  CopyCss(args.css, args.site_root)
+  # Output algos/algo_name/*.md as site_root/algo_name/*.html
+  post_dirs = [path for path in os.scandir(args.posts) if path.is_dir()]
+  GeneratePosts(args.site_root, post_dirs, pandoc_flags)
+  # Output docs/*.md as site_root/*.html
+  doc_paths = glob.iglob(os.path.join(args.docs, '*.md'))
+  GenerateDocs(args.site_root, doc_paths, pandoc_flags)
+  # Copy css into site_root/css
+  CopyFiles(args.css, args.site_root, '*.css')
 
 
 if __name__ == '__main__':
