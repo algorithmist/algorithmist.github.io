@@ -1,7 +1,92 @@
 <meta charset="utf-8">
-<object id="failure" data="failure.svg" type="image/svg+xml"></object>
 
 <script>
-  var svg = document.getElementById("failure");
-  console.log(svg);
+  var noop = function(color) {};
+  var path = [
+    "ab",
+    "ab2a",
+    "a",
+    "a2root",
+    "root",
+    "root2b",
+    "b"
+  ];
+  var elems = [noop];
+
+  var fail;
+  function foo() {
+    var prev = document.getElementById("prev");
+    prev.disabled = false;
+    var next = document.getElementById("next");
+    next.disabled = false;
+
+    fail = document.getElementById("failure");
+
+    for (let i in path) {
+      let g = fail.contentDocument.getElementById(path[i]);
+      let f = null;
+      if (g.getAttribute("class") === "node") {
+        let ellipse = g.getElementsByTagName("ellipse")[0];
+        f = function(color) {
+          if (color === "black") {
+            ellipse.style.fill = "none";
+          } else {
+            ellipse.style.fill = color;
+          }
+        }
+      } else {
+        // Edge
+        let path = g.getElementsByTagName("path")[0];
+        let polygon = g.getElementsByTagName("polygon")[0];
+        f = function(color) {
+          path.style.stroke = color;
+          polygon.style.fill = color;
+          polygon.style.stroke = color;
+        };
+      }
+      elems.push(f);
+    }
+
+    // End by adding the dummy item to the list.
+    elems.push(noop);
+  }
+  var curr = 0;
+  function forward() {
+    if (fail == null) {
+      return;
+    }
+
+    elems[curr]("black");
+
+    curr += 1;
+    if (curr == elems.length) {
+      curr = elems.length - 1;
+    }
+
+    elems[curr]("red");
+  }
+
+  function backward() {
+    if (fail == null) {
+      return;
+    }
+
+    elems[curr]("black");
+
+    curr -= 1;
+    if (curr == -1) {
+      curr = 0;
+    }
+
+    elems[curr]("red");
+  }
+</script>
+
+<div>
+  <object id="failure" data="failure.svg" type="image/svg+xml" onload="foo()"></object>
+</div>
+<button id="prev" disabled="true" onclick="backward()">&#8249</button>
+<button id="next" disabled="true" onclick="forward()">&#8250</button>
+
+<script>
 </script>
