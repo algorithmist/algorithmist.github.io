@@ -1,5 +1,11 @@
 # Aho-Corasick
 
+$$
+x=1
+$$
+
+$y=2$
+
 Efficient string search is key to many computational applications. Malware
 detection, information retrieval, and gene sequencing (among others) require at
 their core checking for the presence of a large set of target strings in a
@@ -17,7 +23,7 @@ character of the keyword. String search algorithms that simultaneously search
 for multiple keywords in a corpus are more interesting. A straightforward
 approach is to loop over the keywords and check if each one is in the text,
 just like in the single keyword case. Each individual check requires scanning
-the entire input text, giving a runtime of $O(|keywords|) * |text|$). If we
+the entire input text, giving a runtime of $O(|keywords|) * |text|)$. If we
 have many keywords and/or a long text, this search algorithm will perform
 poorly. We can improve this by constructing a new approach that can check for
 many keywords at once.

@@ -23,7 +23,7 @@ DEFAULT_PANDOC_FLAGS = [
   '--template=template.html',
   '--base-header-level=2',
   '--katex',
-  '--lua-filter=diagram-generator.lua',
+  #'--lua-filter=diagram-generator.lua',
 ]
 
 
@@ -41,7 +41,7 @@ def OutputHtml(input_path, output_path, pandoc_flags):
   # TODO: Process multiple files concurrently.
   logging.info('Reading from %s\nWriting to %s', input_path, output_path)
   args = (['pandoc'] + DEFAULT_PANDOC_FLAGS + pandoc_flags +
-          [input_path, '-o', output_path])
+          [input_path, '-o', output_path, '-f', 'markdown', '-t', 'html'])
   run(*args)
 
 
@@ -61,12 +61,13 @@ def GeneratePosts(site_root: str, post_dirs: Iterator[os.DirEntry],
     # Compile all the markdown to html. Copy everything else.
     post_files = glob.iglob(os.path.join(post_dir.path, '*'))
     for input_path in post_files:
+      logging.info('Processing %s', input_path)
       (name, ext) = os.path.splitext(os.path.basename(input_path))
       if name.endswith('test'):
         continue
       output_path = os.path.join(output_dir, name)
       if ext == '.md':
-        OutputHtml(input_path, output_path + '.html', pandoc_flags)
+        OutputHtml(input_path, output_path + '.html', pandoc_flags + ['--toc'])
       else:
         shutil.copy2(input_path, output_path + ext)
 
