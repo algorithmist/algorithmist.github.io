@@ -21,27 +21,24 @@ approach that can check for many keywords at once.
 
 ## Trie-ing harder: More efficient string matching
 
-As a first effort, we can use a **trie** to make a single scan of the text and
-simultaneously check for every keyword at once. A trie is a tree representing a
-collection of keys. Each path from the root to a node represents the prefix of
-at least one key, signified by the labels of the edges moving between nodes.
-Each node stores whether it signifies the end of a full keyword: that is, if
-the path from the root to that node spells out a complete keyword. We’ll call
-the nodes for which this is true __output nodes__. We can now search for
-keywords in the input text by traversing the tree starting from each character
-of the input text in sequence.
+As a first effort, we can use a **[trie](https://en.wikipedia.org/wiki/Trie)** to make a single scan
+of the text and simultaneously check for every keyword at once. A trie is a tree representing a
+collection of keys. Each path from the root to a node represents the prefix of at least one key,
+signified by the labels of the edges moving between nodes. Each node stores whether it signifies the
+end of a full keyword: that is, if the path from the root to that node spells out a complete
+keyword. We’ll call the nodes for which this is true __output nodes__. We can now search for
+keywords in the input text by traversing the tree starting from each character of the input text in
+sequence.
 
-This version of the search algorithm has a complexity of $O(max_keyword_length
-* |text|)$. This is better than what we had before - in most practical cases,
-the number of keywords will be much larger than the length of the longest
-keyword. However, there’s still room for improvement. Consider what happens
-when we reach an input character with no matches, or reach a leaf node: We have
-to go back to the root and back to only a single character further in the input
-than our last start position. This means that we perform a large number of
-redundant traversals of the trie, and thus that our algorithm is slower than it
-has to be. What if we could remember the progress we’ve already made and use it
-to shortcut through the trie, avoiding backtracking? This is the core insight
-of the Aho-Corasick algorithm.
+This version of the search algorithm has a complexity of $O(LT)$, where $L$ is the length of the
+longest keyword. This is better than what we had before - in most practical cases, the number of
+keywords will be much larger than the length of the longest keyword (i.e. $K \gg L$). However,
+there’s still room for improvement. Consider what happens when we reach an input character with no
+matches, or reach a leaf node: We have to go back to the root and back to only a single character
+further in the input than our last start position. This means that we perform lots of redundant
+traversals of the trie, and thus that our algorithm is slower than it has to be. What if we could
+remember the progress we’ve already made and use it to shortcut through the trie, avoiding
+backtracking? This is the core insight of the Aho-Corasick algorithm.
 
 ## The Aho-Corasick Algorithm
 
