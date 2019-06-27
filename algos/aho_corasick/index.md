@@ -91,17 +91,15 @@ traversal.
 
 ## The goto function
 
-Constructing the goto function is actually the same as constructing the trie in
-the preceding section! There is one minor difference pertaining to how we
-handle output nodes. Instead of labelling a node terminating the path for a
-keyword as an output node, we instead add a reference to this node and the
-corresponding keyword to the output function (described
-[below](#the_output_function)). The reason for this will become clear once we
-explain the construction of the failure function, which also contributes to the
-output function. The final difference from the trie construction above is the
-addition of a loopback edge on the root node for every character that does not
-have an outgoing edge from the root. At this point, we’ve built the structure
-shown in \cref{fig:ac:goto}.
+Constructing the goto function is actually the same as constructing the trie in the preceding
+section! **NOTE/TODO: We don't actually say how to do this in the preceding section.**
+There is one minor difference pertaining to how we handle output nodes. Instead of labelling a node
+terminating the path for a keyword as an output node, we instead add a reference to this node and
+the corresponding keyword to the output function (described [below](#the_output_function)). The
+reason for this will become clear once we explain the construction of the failure function, which
+also contributes elements to the output function. The final difference from the trie construction
+above is the addition of a loopback edge on the root node for every character without an outgoing
+edge from the root. At this point, we've built the structure shown in **TODO: Fix this ref**\cref{fig:ac:goto}.
 
 ## The failure function
 
