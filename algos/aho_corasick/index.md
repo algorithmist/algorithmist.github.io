@@ -1,17 +1,10 @@
 # Aho-Corasick
 
-$$
-x=1
-$$
-
-$y=2$
-
-Efficient string search is key to many computational applications. Malware
-detection, information retrieval, and gene sequencing (among others) require at
-their core checking for the presence of a large set of target strings in a
-large corpus of text. In this article, we will explain and implement the
-**Aho-Corasick** algorithm, a fast classical approach for finding keywords in
-an input string.
+Many important computational applications rely on efficient string search. Malware detection,
+information retrieval, and gene sequencing (among others) require at their core checking for the
+presence of a large set of target strings in a large corpus of text. In this article, we will
+explain and implement the **Aho-Corasick** algorithm, a fast classical approach for finding keywords
+in an input string.
 
 ## A naive approach to string search
 
