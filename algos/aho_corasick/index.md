@@ -144,25 +144,22 @@ single state. This is to let us maintain the correct output set when following f
 
 ## Putting it all together
 
-We’ve now built the structure shown in \cref{fig:ac:full}. How do we use it to
+We've now built the structure shown in **TODO: Fix this ref**\cref{fig:ac:full}. How do we use it to
 match against an input text?
 
-This procedure is quite simple; we’ve done all the hard work already. We start
-at the first character of the input text and the root node of the search graph.
-For each character, if there exists an outgoing transition from the current
-node in the goto function, we follow that transition. If there is no such
-transition, we follow the failure transition for the current node. After every
-transition, we advance our position in the input by one. At every state, we
-merge its (possibly empty) output set from the output function into our final,
-overall output, tracking the index in the input text to report the position of
-the match. That’s it!
+This procedure is quite simple; we've done all the hard work already. We start at the first
+character of the input text and the root node of the search graph. For each character, if there
+exists an outgoing transition from the current node in the goto function, we follow that transition.
+If there is no such transition, we follow the failure transition for the current node. After every
+transition, we advance our position in the input by one. At every state, we merge its (possibly
+empty) output set from the output function into our final, overall output, tracking the index in the
+input text to report the position of the match. That's it!
 
-This process is very similar to how we searched for keywords using the trie.
-The difference is that, thanks to the failure function, we only go back to the
-root of the search graph when we absolutely must, and we don’t have to keep
-re-checking characters in the input. This makes our speed even better than the
-trie - we now run in time O(|input text|), since we make one transition for
-each input character, once. Though we don’t prove it here, it’s not hard to
-show that the constant factor on this execution time is quite small - less than
-two!
+This process is very similar to how we searched for keywords using the trie. The difference is that,
+thanks to the failure function, we only go back to the root of the search graph when we absolutely
+must, and we don't have to keep re-checking characters in the input. This makes our speed even
+better than the trie --- we now run in time $O(T)$, since we make one transition for each input
+character, once. Though we don't prove it here, it's not hard to show that the constant factor on
+this execution time is quite small --- less than two!
 
+** TODO: Add wrap-up paragraph**
