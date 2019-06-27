@@ -20,6 +20,44 @@ long text, this search algorithm will perform poorly. We can improve this by con
 approach that can check for many keywords at once.
 
 ## Trie-ing harder: More efficient string matching
+```{.graphviz caption="An example trie, for the words TODO"}
+digraph {
+  rankdir=LR;
+  root [id="root" keyword="True"];
+  t [id="t" keyword="True"];
+  ta [id="ta" keyword="True"];
+  tar [id="tar" keyword="False"];
+  tars [id="tars" keyword="False"];
+  ts [id="ts" keyword="True"];
+  tsa [id="tsa" keyword="False"];
+  tsar [id="tsar" keyword="False"];
+  s [id="s" keyword="True"];
+  st [id="st" keyword="True"];
+  sta [id="sta" keyword="True"];
+  star [id="star" keyword="False"];
+  start [id="start" keyword="False"];
+  a [id="a" keyword="True"];
+  ar [id="ar" keyword="True"];
+  art [id="art" keyword="False"];
+  arts [id="arts" keyword="False"];
+  root -> a [label="a"];
+  root -> s [label="s"];
+  root -> t [label="t"];
+  t -> ts [label="s"];
+  t -> ta [label="a"];
+  ta -> tar [label="r"];
+  tar -> tars [label="s"];
+  ts -> tsa [label="a"];
+  tsa -> tsar [label="r"];
+  s -> st [label="t"];
+  st -> sta [label="a"];
+  sta -> star [label="r"];
+  star -> start [label="t"];
+  a -> ar [label="r"];
+  ar -> art [label="t"];
+  art -> arts [label="s"];
+}
+```
 
 As a first effort, we can use a **[trie](https://en.wikipedia.org/wiki/Trie)** to make a single scan
 of the text and simultaneously check for every keyword at once. A trie is a tree representing a
