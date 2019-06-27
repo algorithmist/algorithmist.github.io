@@ -20,7 +20,8 @@ long text, this search algorithm will perform poorly. We can improve this by con
 approach that can check for many keywords at once.
 
 ## Trie-ing harder: More efficient string matching
-```{.graphviz caption="An example trie, for the words TODO"}
+
+```{.graphviz caption="An example trie, for the words TODO" id="trie"}
 digraph {
   rankdir=LR;
   root [id="root" keyword="True"];
@@ -102,6 +103,27 @@ above is the addition of a loopback edge on the root node for every character wi
 edge from the root. At this point, we've built the structure shown in **TODO: Fix this ref**\cref{fig:ac:goto}.
 
 ## The failure function
+
+```{.graphviz caption="An illustration of the failure function in action" id="failure" animate="foo()" script="failure.js"}
+digraph {
+  splines=true;
+  rankdir=LR;
+  root [id="root"];
+  a [id="a"];
+  ab [id="ab"];
+  b [id="b"];
+  bc [id="bc"];
+  root -> a [xlabel="a"];
+  a -> ab [xlabel="b"];
+  root -> b [xlabel="b"];
+  b -> bc [xlabel="c"];
+
+  ab:n -> a:ne [id="ab2a" constraint=false];
+  a:n -> root:n [id="a2root" constraint=false];
+  root:s -> b:s [id="root2b" constraint=false];
+  ab -> b [id="ab2b" constraint=false];
+}
+```
 
 The failure function is the meat of Aho-Corasick. It is responsible for letting us avoid redundant
 work in the search process by re-routing paths in the search graph when we find a character in the
