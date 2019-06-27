@@ -67,7 +67,8 @@ def GeneratePosts(site_root: str, post_dirs: Iterator[os.DirEntry],
         continue
       output_path = os.path.join(output_dir, name)
       if ext == '.md':
-        OutputHtml(input_path, output_path + '.html', pandoc_flags + ['--toc'])
+        OutputHtml(input_path, output_path + '.html',
+                   pandoc_flags + ['--toc', f'--extract-media={output_path}'])
       else:
         shutil.copy2(input_path, output_path + ext)
 
