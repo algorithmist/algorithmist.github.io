@@ -80,14 +80,14 @@ backtracking? This is the core insight of the Aho-Corasick algorithm.
 
 ## The Aho-Corasick Algorithm
 
-The Aho-Corasick algorithm for string matching (named after its inventors,
-Alfred V. Aho and Margaret J. Corasick), extends trie-based string matching by
-making it easier to re-use work in traversing the trie. We’ll need three core
-components to do this: the goto function, which is similar to the existing
-graph structure of the trie and handles normal transitions, the failure
-function, which tells us how to avoid restarting entirely when a match fails,
-and the output function, which allows us to encode multiple matches from a
-single trie traversal.
+The Aho-Corasick algorithm for string matching (named after its inventors, [Alfred V.
+Aho](https://en.wikipedia.org/wiki/Alfred_Aho) and [Margaret J.
+Corasick](https://dblp.org/pers/hd/c/Corasick:Margaret_J=)), extends trie-based string matching by
+making it easier to re-use work in traversing the trie. We'll need three core components to do this:
+the *goto function*, which is similar to the existing graph structure of the trie and handles normal
+transitions, the *failure function*, which tells us how to avoid restarting entirely when a match
+fails, and the *output function*, which allows us to encode multiple matches from a single trie
+traversal.
 
 ## The goto function
 
