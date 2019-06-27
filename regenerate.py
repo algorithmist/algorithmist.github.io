@@ -23,7 +23,7 @@ DEFAULT_PANDOC_FLAGS = [
   '--template=template.html',
   '--base-header-level=2',
   '--katex',
-  #'--lua-filter=diagram-generator.lua',
+  '--lua-filter=diagram-generator.lua',
 ]
 
 
