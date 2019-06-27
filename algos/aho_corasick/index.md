@@ -10,7 +10,7 @@ in an input string.
 
 Searching for a single string (keyword) in a corpus is straightforward: Iterate through the
 characters of the keyword and the corpus checking for matches. If you reach the end of the keyword,
-you’ve found the string. If two characters **don’t** match, start over at the next start position in
+you've found the string. If two characters **don't** match, start over at the next start position in
 the corpus and the first character of the keyword. String search algorithms that simultaneously
 search for multiple keywords in a corpus are more interesting. A straightforward approach is to loop
 over the keywords and check if each one is in the text, just like in the single keyword case. Each
@@ -69,13 +69,13 @@ keywords in the input text by traversing the tree starting from each character o
 sequence.
 
 This version of the search algorithm has a complexity of $O(LT)$, where $L$ is the length of the
-longest keyword. This is better than what we had before - in most practical cases, the number of
+longest keyword. This is better than what we had before --- in most practical cases, the number of
 keywords will be much larger than the length of the longest keyword (i.e. $K \gg L$). However,
-there’s still room for improvement. Consider what happens when we reach an input character with no
+there's still room for improvement. Consider what happens when we reach an input character with no
 matches, or reach a leaf node: We have to go back to the root and back to only a single character
 further in the input than our last start position. This means that we perform lots of redundant
 traversals of the trie, and thus that our algorithm is slower than it has to be. What if we could
-remember the progress we’ve already made and use it to shortcut through the trie, avoiding
+remember the progress we've already made and use it to shortcut through the trie, avoiding
 backtracking? This is the core insight of the Aho-Corasick algorithm.
 
 ## The Aho-Corasick Algorithm
