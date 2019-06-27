@@ -8,18 +8,16 @@ in an input string.
 
 ## A naive approach to string search
 
-Searching for a single string (keyword) in a corpus is straightforward: Iterate
-through the characters of the keyword and the corpus checking for matches. If
-you reach the end of the keyword, you’ve found the string. If two characters
-**don’t** match, start over at the next start position in the corpus and the first
-character of the keyword. String search algorithms that simultaneously search
-for multiple keywords in a corpus are more interesting. A straightforward
-approach is to loop over the keywords and check if each one is in the text,
-just like in the single keyword case. Each individual check requires scanning
-the entire input text, giving a runtime of $O(|keywords|) * |text|)$. If we
-have many keywords and/or a long text, this search algorithm will perform
-poorly. We can improve this by constructing a new approach that can check for
-many keywords at once.
+Searching for a single string (keyword) in a corpus is straightforward: Iterate through the
+characters of the keyword and the corpus checking for matches. If you reach the end of the keyword,
+you’ve found the string. If two characters **don’t** match, start over at the next start position in
+the corpus and the first character of the keyword. String search algorithms that simultaneously
+search for multiple keywords in a corpus are more interesting. A straightforward approach is to loop
+over the keywords and check if each one is in the text, just like in the single keyword case. Each
+individual check requires scanning the entire input text, giving a runtime of $O(KT)$, where $K$
+is the number of keywords and $T$ is the length of the text. If we have many keywords and/or a
+long text, this search algorithm will perform poorly. We can improve this by constructing a new
+approach that can check for many keywords at once.
 
 ## Trie-ing harder: More efficient string matching
 
