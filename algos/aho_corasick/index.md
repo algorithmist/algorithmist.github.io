@@ -137,11 +137,10 @@ transitioning to the state specified by the failure function, we fail again on t
 
 ## The output function
 
-Surprise! We have actually already constructed the output function through the
-previous two steps to construct the goto function and the failure function. The
-main difference from our output node labeling in the trie example is that the
-output function may now return multiple keywords for a single state. This is to
-let us maintain the correct output set when following failure transitions.
+Surprise! We have actually already constructed the output function through the previous two steps to
+construct the goto function and the failure function. The main difference from our output node
+labeling in the trie example is that the output function may now return multiple keywords for a
+single state. This is to let us maintain the correct output set when following failure transitions.
 
 ## Putting it all together
 
