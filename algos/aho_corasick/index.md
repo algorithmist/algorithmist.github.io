@@ -21,7 +21,7 @@ approach that can check for many keywords at once.
 
 ## Trie-ing harder: More efficient string matching
 
-```{.graphviz caption="An example trie, for the words TODO" id="trie"}
+```{.graphviz id="trie" style="width:100%;height:100%;"}
 digraph {
   rankdir=LR;
   root [id="root" keyword="True"];
