@@ -75,10 +75,17 @@
       <h1 class="article-title">$title$</h1>
       $if(date)$
       <p class="date">$date$</p>
-      $endif$ $if(toc)$
+      $endif$
+      $if(toc)$
+        $if(is_article)$
+      <nav class="article-toc" id="$idprefix$TOC" role="doc-toc">
+        $table-of-contents$
+      </nav>
+        $else$
       <nav id="$idprefix$TOC" role="doc-toc">
         $table-of-contents$
       </nav>
+        $endif$
       $endif$
       <div class="article-content">
         $body$

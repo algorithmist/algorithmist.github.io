@@ -66,7 +66,7 @@ a {
   text-decoration: underline;
 }
 
-/* Nav styles */
+/* General purpose nav styles */
 nav {
   line-height: 3em;
 }
@@ -85,6 +85,27 @@ nav a:hover,
 nav a:focus {
   background: var(--red);
   color: white;
+}
+
+/* Article nav styles */
+
+/* TODO: Get these selectors working properly for nested lists. */
+.article-toc {
+  line-height: 1em;
+  text-align: left;
+}
+
+.article-toc ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.article-toc a {
+  font-size: 1em;
+  letter-spacing: 0;
+  border: none;
+  padding: 0;
+  text-transform: none;
 }
 
 /* Post blurb styles */
