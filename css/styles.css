@@ -67,6 +67,10 @@ a {
   text-decoration: underline;
 }
 
+a.root-link {
+  text-decoration: none;
+}
+
 /* General purpose nav styles */
 nav {
   line-height: 3em;
