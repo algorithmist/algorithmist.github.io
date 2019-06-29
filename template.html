@@ -63,7 +63,7 @@
     <header>
       <a href="https://algorithmist.github.io" class="root-link"><h1>The Algorithmist</h1></a>
       <h3>Advanced algorithms thoroughly explained</h3>
-      <nav>
+      <nav class="site-nav">
         <a href="/about.html">about</a>
         <a href="/contributions.html">contribute</a>
         <a href="/categories">categories</a>
@@ -79,11 +79,11 @@
       $if(toc)$
         $if(is_article)$
       <h2>Table of Contents</h2>
-      <nav class="article-toc" id="$idprefix$TOC" role="doc-toc">
+      <nav class="article-toc" id="$idprefix$TOC" role="article-toc">
         $table-of-contents$
       </nav>
         $else$
-      <nav id="$idprefix$TOC" role="doc-toc">
+      <nav class="doc-toc" id="$idprefix$TOC" role="doc-toc">
         $table-of-contents$
       </nav>
         $endif$

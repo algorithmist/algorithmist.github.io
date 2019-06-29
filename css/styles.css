@@ -72,18 +72,9 @@ a.root-link {
 }
 
 /* General purpose nav styles */
-nav {
-  line-height: 3em;
-}
-
 nav a {
-  border: 1px solid var(--red);
-  font-size: 0.6em;
-  letter-spacing: var(--h-kerning);
-  padding: 1em 2em;
-  transition-property: color, background;
-  text-transform: uppercase;
   text-decoration: none;
+  transition-property: color, background;
 }
 
 nav a:hover,
@@ -92,12 +83,28 @@ nav a:focus {
   color: white;
 }
 
-/* Article nav styles */
+/* Site nav styles */
+.site-nav {
+  line-height: 3em;
+}
 
-/* TODO: Get these selectors working properly for nested lists. */
+.site-nav a {
+  border: 1px solid var(--red);
+  font-size: 0.6em;
+  letter-spacing: var(--h-kerning);
+  padding: 1em 2em;
+  text-transform: uppercase;
+  transition-property: color, background;
+}
+
+/* Article nav styles */
 .article-toc {
-  line-height: 1em;
+  line-height: 1.2em;
   text-align: left;
+}
+
+.article-toc a {
+  font-size: 1em;
 }
 
 .article-toc ul {
@@ -105,15 +112,7 @@ nav a:focus {
   padding: 0;
 }
 
-.article-toc a {
-  font-size: 1em;
-  letter-spacing: 0;
-  border: none;
-  padding: 0;
-  text-transform: none;
-}
-
-.article-toc ul ul {
+.article-toc ul > li {
   margin-left: 10px;
 }
 
