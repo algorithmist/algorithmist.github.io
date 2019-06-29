@@ -109,6 +109,10 @@ nav a:focus {
   text-transform: none;
 }
 
+.article-toc ul ul {
+  margin-left: 10px;
+}
+
 /* Post blurb styles */
 .post {
   letter-spacing: var(--h-kerning);
