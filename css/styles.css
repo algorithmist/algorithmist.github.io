@@ -333,3 +333,25 @@ code span.wa {
   font-weight: bold;
   font-style: italic;
 } /* Warning */
+
+/* SVG/Figure styles */
+div.fig {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+figure {
+  width: 210%;
+  text-align: center;
+  font-style: italic;
+  font-size: smaller;
+  text-indent: 0;
+  margin: 0.5em;
+  padding: 0.5em; 
+}
+
+figure svg {
+  width: 100%;
+  height: auto;
+}
