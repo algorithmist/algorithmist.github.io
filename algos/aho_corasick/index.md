@@ -1,5 +1,8 @@
-# Aho-Corasick
+---
+title: "Aho-Corasick: Fast multi-keyword string search"
+...
 
+# Introduction
 Many important computational applications rely on efficient string search. Malware detection,
 information retrieval, and gene sequencing (among others) require at their core checking for the
 presence of a large set of target strings in a large corpus of text. In this article, we will
@@ -79,7 +82,7 @@ traversals of the trie, and thus that our algorithm is slower than it has to be.
 remember the progress we've already made and use it to shortcut through the trie, avoiding
 backtracking? This is the core insight of the Aho-Corasick algorithm.
 
-## The Aho-Corasick Algorithm
+# The Aho-Corasick Algorithm
 
 The Aho-Corasick algorithm for string matching (named after its inventors, [Alfred V.
 Aho](https://en.wikipedia.org/wiki/Alfred_Aho) and [Margaret J.
@@ -184,4 +187,5 @@ better than the trie --- we now run in time $O(T)$, since we make one transition
 character, once. Though we don't prove it here, it's not hard to show that the constant factor on
 this execution time is quite small --- less than two!
 
+# Conclusions and further reading
 ** TODO: Add wrap-up paragraph**
