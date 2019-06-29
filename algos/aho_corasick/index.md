@@ -24,7 +24,7 @@ approach that can check for many keywords at once.
 
 ## Trie-ing harder: More efficient string matching
 
-```{.graphviz id="trie" style="width:100%;height:100%;"}
+```{.graphviz name="trie" style="width:100%;height:100%;" caption="A trie for the words \"tars, start, tsar, arts, art\""}
 digraph {
   rankdir=LR;
   root [id="root" keyword="True"];
@@ -107,7 +107,7 @@ edge from the root. At this point, we've built the structure shown in **TODO: Fi
 
 ## The failure function
 
-```{.graphviz caption="An illustration of the failure function in action" id="failure" animate="foo()" script="failure.js"}
+```{.graphviz caption="An illustration of the failure function in action" name="failure" animate="foo()" script="failure.js"}
 digraph {
   splines=true;
   rankdir=LR;
