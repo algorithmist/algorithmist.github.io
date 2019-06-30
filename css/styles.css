@@ -62,6 +62,10 @@ header h1 {
   font-weight: 300;
 }
 
+main h2 {
+  text-align: left;
+}
+
 a {
   color: var(--red);
   text-decoration: underline;
@@ -112,7 +116,7 @@ nav a:focus {
   padding: 0;
 }
 
-.article-toc ul > li {
+.article-toc li {
   margin-left: 10px;
 }
 

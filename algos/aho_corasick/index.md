@@ -107,7 +107,7 @@ edge from the root. At this point, we've built the structure shown in **TODO: Fi
 
 ## The failure function
 
-```{.graphviz caption="An illustration of the failure function in action" name="failure" animate="foo()" script="failure.js"}
+```{.graphviz name="failure" caption="The failure function in action" animate="fail"} 
 digraph {
   splines=true;
   rankdir=LR;

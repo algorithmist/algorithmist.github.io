@@ -1,0 +1,35 @@
+/* Initial styles in case we're viewing the page without JS */
+#ab2a > path, #a2root > path, #root2b > path {
+  stroke: green;
+}
+
+#ab2a > polygon, #a2root > polygon, #root2b > polygon {
+  stroke: green;
+  fill: green;
+}
+
+#ab2b > path {
+  stroke: red;
+}
+
+#ab2b > polygon {
+  stroke: red;
+  fill: red;
+}
+
+button {
+  visibility: hidden;
+  padding: 1%;
+  font-family: inherit;
+  font-size: 100%;
+  margin: 0;
+  margin-top: 0.75em;
+}
+
+button, [type="button"] {
+  -webkit-appearance: button;
+}
+
+button + button {
+  margin-left: 10%;
+}
