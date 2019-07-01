@@ -66,6 +66,10 @@ main h2 {
   text-align: left;
 }
 
+.post h2 {
+  text-align: center;
+}
+
 a {
   color: var(--red);
   text-decoration: underline;
