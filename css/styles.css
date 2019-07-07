@@ -75,10 +75,6 @@ a {
   text-decoration: underline;
 }
 
-a.root-link {
-  text-decoration: none;
-}
-
 /* General purpose nav styles */
 nav a {
   text-decoration: none;
@@ -141,6 +137,14 @@ nav a:focus {
 .post:hover h3 {
   background: var(--red);
   color: white;
+}
+
+a.root-link {
+  text-decoration: none;
+}
+
+.root-link:hover h1 {
+  color: var(--red);
 }
 
 /* From the Pandoc styles */
