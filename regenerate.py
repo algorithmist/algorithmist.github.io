@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from typing import List, Iterator
+from csv import reader
 
 import argparse
 import glob
@@ -20,12 +21,22 @@ LOGGING_LEVELS = {
   'CRITICAL': logging.CRITICAL,
 }
 
+ARTICLE_TEMPLATE_FILE_PATH = 'template.html'
+
 DEFAULT_PANDOC_FLAGS = [
   '-s',
-  '--template=template.html',
+  f'--template={ARTICLE_TEMPLATE_FILE_PATH}',
   '--base-header-level=2',
   '--katex',
+]
+
+TITLE_LIST_PATH = '/tmp/algorithmist-titles.csv'
+
+FILTER_FLAGS = [
   '--lua-filter=diagram-generator.lua',
+  # Set the output filepath in metadata for the metadata extraction filter
+  f'--metadata=posts_list_filename:{TITLE_LIST_PATH}',
+  '--lua-filter=extract-metadata.lua',
 ]
 
 
@@ -77,9 +88,50 @@ def generate_posts(site_root: str, post_dirs: Iterator[os.DirEntry],
           input_path, output_path + '.html', pandoc_flags + [
             '--toc',
             '--extract-media=%s' % output_path, '--variable=is_article:true'
-          ])
+          ] + FILTER_FLAGS)
       else:
         shutil.copy2(input_path, output_path + ext)
+
+
+def generate_root(site_root: str, base_template_path: str,
+                  root_template_path: str):
+  '''Generate the site root (index.html)'''
+  with open(base_template_path, 'r') as base_template_file:
+    base_template = base_template_file.read()
+
+  with open(root_template_path, 'r') as root_template_file:
+    root_template = root_template_file.read()
+
+  def make_card(row):
+    '''Utility function to make a single "card" for an article on the site root'''
+    article_path, title, subtitle = row
+    card = root_template.replace('{{FILENAME}}', article_path)
+    card = card.replace('{{TITLE}}', title)
+    card = card.replace('{{SUBTITLE}}', subtitle)
+    return card
+
+  # TODO: Right now, this generates cards in the order they were added to TITLE_LIST_PATH. We
+  # probably want these to be sorted by creation date or something?
+  with open(TITLE_LIST_PATH, 'r') as title_list_file:
+    title_reader = reader(title_list_file)
+    article_cards = [make_card(row) for row in title_reader]
+
+  with open(os.path.join(site_root, 'index.html'), 'w') as root_index_file:
+    root_index = base_template.replace('{{MAIN}}', '\n'.join(article_cards))
+    root_index_file.write(root_index)
+
+
+def generate_templates(base_template_path: str, article_template_path: str):
+  '''Update the article template file'''
+  with open(base_template_path, 'r') as base_template_file:
+    base_template = base_template_file.read()
+
+  with open(article_template_path, 'r') as article_template_file:
+    article_template = article_template_file.read()
+
+  with open(ARTICLE_TEMPLATE_FILE_PATH, 'w') as full_template_file:
+    full_template = base_template.replace('{{MAIN}}', article_template)
+    full_template_file.write(full_template)
 
 
 def copy_files(input_dir: str, site_root: str, glob_expr: str):
@@ -111,6 +163,18 @@ def parse_args():
                       type=str,
                       default='build',
                       help='output dir, relative to the repo root')
+  parser.add_argument('--base_template',
+                      type=str,
+                      default='templates/skeleton.html',
+                      help='base template HTML file for articles and site root')
+  parser.add_argument('--article_template',
+                      type=str,
+                      default='templates/article.html',
+                      help='template HTML file for articles')
+  parser.add_argument('--root_template',
+                      type=str,
+                      default='templates/root.html',
+                      help='template HTML file for entries on site root index')
   parser.add_argument('--pandoc_flags',
                       type=str,
                       default='',
@@ -136,9 +200,16 @@ def main():
     logging.error('Must be run from the root git directory')
     return
   pandoc_flags = [arg for arg in args.pandoc_flags.split(' ') if arg]
+  # Update the article template
+  # generate_templates(args.base_template, args.article_template)
+  # Clear the posts list
+  if os.path.exists(TITLE_LIST_PATH):
+    os.remove(TITLE_LIST_PATH)
   # Output algos/algo_name/*.md as site_root/algo_name/*.html
   post_dirs = [path for path in os.scandir(args.posts) if path.is_dir()]
   generate_posts(args.site_root, post_dirs, pandoc_flags)
+  # Output index.html
+  generate_root(args.site_root, args.base_template, args.root_template)
   # Output docs/*.md as site_root/*.html
   doc_paths = glob.iglob(os.path.join(args.docs, '*.md'))
   generate_docs(args.site_root, doc_paths, pandoc_flags)

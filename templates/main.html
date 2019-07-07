@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="generator" content="pandoc" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=yes"
+    />
+    <meta name="author" content="The Algorithmist" />
+    $if(date-meta)$
+    <meta name="dcterms.date" content="$date-meta$" />
+    $endif$ $if(keywords)$
+    <meta
+      name="keywords"
+      content="algorithms,tutorial,visualization,$for(keywords)$$keywords$$sep$, $endfor$"
+    />
+    $else$
+    <meta name="keywords" content="algorithms,tutorial,visualization" />
+    $endif$
+    <title>The Algorithmist$if(pagetitle)$ - $pagetitle$$endif$</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Raleway|Lato"
+      type="text/css"
+    />
+    <link rel="stylesheet" href="/css/styles.css" type="text/css" />
+    $if(is_article)$
+    <link rel="stylesheet" href="article.css" type="text/css" />
+    <script src="article.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.css"
+      integrity="sha384-dbVIfZGuN1Yq7/1Ocstc1lUEm+AT+/rCkibIcC/OmWo5f0EA48Vf8CytHzGrSwbQ"
+      crossorigin="anonymous"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.js"
+      integrity="sha384-2BKqo+exmr9su6dir+qCw08N2ZKRucY4PrGQPPWU1A7FtlCGjmEGFqXCv5nyM5Ij"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        var mathElements = document.getElementsByClassName("math");
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains("display"),
+              throwOnError: false
+            });
+          }
+        }
+      });
+    </script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css"
+    />
+    $endif$
+  </head>
+
+  <body>
+    <header>
+      <a href="https://algorithmist.github.io" class="root-link"
+        ><h1>The Algorithmist</h1></a
+      >
+      <h3>Advanced algorithms thoroughly explained</h3>
+      <nav class="site-nav">
+        <a href="/about.html">about</a>
+        <a href="/contributions.html">contribute</a>
+        <a href="/categories">categories</a>
+        <a href="/recent">recent posts</a>
+      </nav>
+    </header>
+    <main>
+      $if(is_article)$
+      <h1 class="article-title">$title$</h1>
+      $if(date)$
+      <p class="date">$date$</p>
+      $endif$ $if(toc)$
+      <h2>Table of Contents</h2>
+      <nav class="article-toc" id="$idprefix$TOC" role="article-toc">
+        $table-of-contents$
+      </nav>
+      $endif$
+      <div class="article-content">
+        $body$
+      </div>
+      $else$ {{MAIN}} $endif$
+    </main>
+  </body>
+</html>
