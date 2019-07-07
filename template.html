@@ -76,9 +76,8 @@
         <a href="/recent">recent posts</a>
       </nav>
     </header>
-
     <main>
-      <h1 class="article-title">$title$</h1>
+      <h1 class="article-title">$title$$if(subtitle)$: $subtitle$$endif$</h1>
       $if(date)$
       <p class="date">$date$</p>
       $endif$ $if(toc)$ $if(is_article)$

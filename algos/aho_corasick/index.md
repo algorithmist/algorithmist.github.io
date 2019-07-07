@@ -1,5 +1,6 @@
 ---
-title: "Aho-Corasick: Fast multi-keyword string search"
+title: 'Aho-Corasick'
+subtitle: 'Fast multi-keyword string search'
 ...
 
 # Introduction
