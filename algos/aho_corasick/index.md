@@ -135,11 +135,21 @@ digraph {
 }
 ```
 
-The failure function is the meat of Aho-Corasick. It is responsible for letting us avoid redundant
-work in the search process by re-routing paths in the search graph when we find a character in the
-input with no matching outgoing edge from the current node (i.e. a character mismatch between the
-input and a keyword). Rather than returning to the root and starting again, the failure function
-tells us how to keep going without a full restart whenever possible.
+The intuition here is that, because the goto function constructs a tree, each node other than the
+root will have a single parent node. This parent transitions to its child on a single, particular
+character (let's call this character "$x$" for now). If we look at what this parent does on a
+character mismatch, and keep going up its chain of ancestors until we find a node with a valid
+transition for $x$, then we can use that transition to figure out the next node that might
+be valid after a failure at the original node.
+
+You may have noticed that this is a recursive definition: the failure transition for a node is
+defined in terms of the failure transition for its parents. This construction gives the failure
+function a useful property --- taking the *single* failure transition from a node will lead
+eventually to the node representing the longest suffix that's also part of a keyword *no matter what
+the mismatched character is*. Informally, you can see that this arises from the "failure forwarding"
+style in which the transitions are constructed.
+
+We'll go through this process more formally below.
 
 The failure function is defined recursively based on the goto function. For the first layer of the
 graph --- the set of nodes representing having matched a single character --- the failure function
