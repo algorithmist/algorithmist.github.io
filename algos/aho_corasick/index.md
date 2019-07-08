@@ -108,7 +108,16 @@ this?**
 
 ## The failure function
 
-```{.graphviz name="failure" caption="The failure function in action" animate="fail"} 
+The failure function is the meat of Aho-Corasick. It is responsible for letting us avoid redundant
+work while searching. Normally, with a trie, when we find a mismatched character, we have to go back
+to the root. The failure function works by re-routing mismatches to possibly matching nodes instead
+of having to completely restart.
+
+Here's an example. Consider the following search graph for the keywords "ab" and "bc". Step through
+to see how the failure function lets us skip jumping back to the root on a character mismatch at
+node $ab$.
+
+```{.graphviz name="failure" caption="Computing the failure function for node ab" animate="fail"} 
 digraph {
   splines=true;
   rankdir=LR;
@@ -118,13 +127,10 @@ digraph {
   b [id="b"];
   bc [id="bc"];
   root -> a [xlabel="a"];
-  a -> ab [xlabel="b"];
-  root -> b [xlabel="b"];
+  a -> ab [id="a2ab" xlabel="b"];
+  root -> b [id="root2b" xlabel="b"];
   b -> bc [xlabel="c"];
 
-  ab:n -> a:ne [id="ab2a" constraint=false];
-  a:n -> root:n [id="a2root" constraint=false];
-  root:s -> b:s [id="root2b" constraint=false];
   ab -> b [id="ab2b" constraint=false];
 }
 ```
