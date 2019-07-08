@@ -212,4 +212,27 @@ character, once. Though we don't prove it here, it's not hard to show that the c
 this execution time is quite small --- less than two!
 
 # Conclusions and further reading
-** TODO: Add wrap-up paragraph**
+
+There are still some parts of Aho-Corasick to explore, if you're interested. For one thing, though
+we reduced the search time complexity, what did we do to the time complexity for constructing the
+search graph? 
+
+You may also have a sense that we could do even better than the failure
+function --- why do we potentially have to make *multiple* failure transitions to find the right
+node on a mismatch? Why don't we just encode the correct transition for every possible mismatched
+character, making only a single jump on a mismatch? Good thinking! We can in fact do exactly this,
+constructing a **deterministic finite automaton** instead of a trie, and gaining further performance
+improvements.
+
+It may also be interesting to read about other string search algorithms, with other properties. A
+few to check out include
+[Knuth-Morris-Pratt](https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm)
+and [Boyer-Moore](https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore_string-search_algorithm) for
+single-pattern search, as well as
+[Commentz-Walter](https://en.wikipedia.org/wiki/Commentz-Walter_algorithm), which extends
+Boyer-Moore to the multiple-pattern case (like Aho-Corasick) and can out-perform Aho-Corasick.
+Beyond this, there's a host of interesting algorithms for fuzzy string search --- finding partial
+keyword matches in strings.
+
+If you want to read more about Aho-Corasick itself, check out the [original
+paper](https://cr.yp.to/bib/1975/aho.pdf).
