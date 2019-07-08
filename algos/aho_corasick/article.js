@@ -1,13 +1,13 @@
 var noop = function(color, forward) {};
-var path = ["ab", "ab2a", "a", "a2root", "root", "root2b", "b", "ab2b"];
+var path = ["ab", "a", "a2ab", "root", "root2b", "b", "ab2b"];
+var hidden = ["ab2b"];
 var elems = [noop];
 
 var explanations = [
-  "At node ab, any character triggers a failure.",
-  "We look at ab's previous node.",
-  "At node a, 'b' triggers a failure.",
-  "At node a, 'b' triggers a failure.",
-  "We look at the root's transition on 'b'.",
+  "What should the failure transition be for node ab?",
+  "We start by looking at ab's parent node, a.",
+  "Node a transitions to ab on character 'b'.",
+  "Node a's failure transition is to the root.",
   "We look at the root's transition on 'b'.",
   "We move to b and are done.",
   "Node ab's failure transition is to node b."
@@ -16,6 +16,7 @@ var explanations = [
 var fail;
 var caption;
 var original_caption;
+
 function fail() {
   let prev = document.getElementById("fail_prev");
   prev.disabled = false;
@@ -29,7 +30,8 @@ function fail() {
   original_caption = caption.innerText;
 
   for (let i in path) {
-    let g = fail.querySelector("#" + path[i]);
+    let name = path[i];
+    let g = fail.querySelector("#" + name);
     let f = null;
     if (g.getAttribute("class") === "node") {
       let ellipse = g.getElementsByTagName("ellipse")[0];
@@ -43,11 +45,17 @@ function fail() {
       };
     } else {
       // Edge
-      g.style.visibility = "hidden";
+      let should_hide = hidden.includes(name);
+      if (should_hide) {
+        g.style.visibility = "hidden";
+      }
+
       let path = g.getElementsByTagName("path")[0];
       let polygon = g.getElementsByTagName("polygon")[0];
       f = function(color, forward) {
-        g.style.visibility = forward ? "visible" : "hidden";
+        if (should_hide) {
+          g.style.visibility = forward ? "visible" : "hidden";
+        }
         path.style.stroke = color;
         polygon.style.fill = color;
         polygon.style.stroke = color;
@@ -61,6 +69,7 @@ function fail() {
   elems.push(noop);
 }
 var curr = 0;
+
 function fail_forward() {
   if (fail == null) {
     return;
