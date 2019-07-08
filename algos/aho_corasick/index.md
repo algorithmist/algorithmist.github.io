@@ -151,10 +151,12 @@ style in which the transitions are constructed.
 
 We'll go through this process more formally below.
 
+### Constructing the failure function
+
 The failure function is defined recursively based on the goto function. For the first layer of the
 graph --- the set of nodes representing having matched a single character --- the failure function
 will always map back to the root. The intuition here is simple: If we have reached a failure state
-after matching a single character, then we can't possibly be in a prefix state for any other
+after matching a single character, then we definitely are not in a prefix state for any other
 keywords and need to go back to the root.
 
 For subsequent layers, we compute the failure function inductively in terms of the failure function
@@ -162,20 +164,23 @@ for the immediately preceding layer. This process works as follows:
 
 1. Consider all states in the preceding layer. For each state $r$, find every symbol $a$ with a
    valid transition out of $r$ to some state $s$.
-2. For each $a$, follow the failure function from $r$ until reaching either the root or a state $t$
-   such that $t$ has a valid transition for $a$.
-3. Then, set the value of the failure function for $s$ to be the state $s^\prime$ reached by
+2. For each $a$, follow the failure function from $r$ until reaching a state $t$ such that $t$ has a
+   valid transition for $a$. Some $t$ is guaranteed to exist because the root has a
+   transition for every character in the alphabet (though it may be a loopback transition to the
+   root).
+3. Set the value of the failure function for $s$ to be the state $s^\prime$ reached by
    transitioning with $a$ from $t$.
-4. Set the output function for state $s$ to be its original outputs combined with the outputs for
-   $s^\prime$.
+4. Set the output function for state $s$ to be the combination of its original outputs with the
+   outputs for $s^\prime$.
 5. Continue for all other $r$ and $a$ in the layer, then move to the next layer.
 
 Intuitively, this process finds the next state in the search graph that could possibly be correct if
-the current character is actually part of another keyword. Merging the output sets in step (4) means
-that we don't miss keywords by taking these transitions, but also don't need to keep restarting the
-search for every character of the input. It's interesting to think about why there's only a single
-failure state for any given state --- try it! (Hint: think about what would happen if, after
-transitioning to the state specified by the failure function, we fail again on the next character.)
+the current (mismatched) character is part of another keyword. Merging the output sets in step (4)
+means that we don't miss keywords by taking these transitions, but also don't need to keep
+restarting the search for every character of the input. It's interesting to think about why there's
+only a single failure state for any given state --- try it! (Hint: think about what would happen if,
+after transitioning to the state specified by the failure function, we fail again on the next
+character.)
 
 ## The output function
 
