@@ -184,25 +184,27 @@ character.)
 
 ## The output function
 
-Surprise! We have actually already constructed the output function through the previous two steps to
+Surprise! We have already constructed the output function through the previous two steps to
 construct the goto function and the failure function. The main difference from our output node
 labeling in the trie example is that the output function may now return multiple keywords for a
 single state. This is to let us maintain the correct output set when following failure transitions.
 
 ## Putting it all together
 
+**TODO: Are we going to have a figure here, showing the full search graph? I think it would be
+good**
 We've now built the structure shown in **TODO: Fix this ref**\cref{fig:ac:full}. How do we use it to
 match against an input text?
 
-This procedure is quite simple; we've done all the hard work already. We start at the first
+This procedure is straightforward; we've done all the hard work already. We start at the first
 character of the input text and the root node of the search graph. For each character, if there
 exists an outgoing transition from the current node in the goto function, we follow that transition.
 If there is no such transition, we follow the failure transition for the current node. After every
 transition, we advance our position in the input by one. At every state, we merge its (possibly
-empty) output set from the output function into our final, overall output, tracking the index in the
-input text to report the position of the match. That's it!
+empty) output set from the output function into our final output, tracking the index in the input
+text to report the position of the match. That's it!
 
-This process is very similar to how we searched for keywords using the trie. The difference is that,
+This process is similar to how we searched for keywords using the trie. The difference is that,
 thanks to the failure function, we only go back to the root of the search graph when we absolutely
 must, and we don't have to keep re-checking characters in the input. This makes our speed even
 better than the trie --- we now run in time $O(T)$, since we make one transition for each input
