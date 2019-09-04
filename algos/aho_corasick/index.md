@@ -1,5 +1,6 @@
 ---
-title: "Aho-Corasick: Fast multi-keyword string search"
+title: 'Aho-Corasick'
+subtitle: 'Fast multi-keyword string search'
 ...
 
 # Introduction
@@ -14,37 +15,37 @@ There are also some additional examples in the [appendix](#appendix).
 
 [trie]: https://en.wikipedia.org/wiki/Trie
 
-Throughout this article, our working example will consist of the keywords `[ab, aba, bab]` and the
-input text `abab`. These keywords form this trie:
+Throughout this article, our working example will consist of the keywords `[ab, abb, ba]`. These
+keywords form this trie:
 
 ```{
   .graphviz
   #example_trie
-  source="algos/aho_corasick/aba_bab_example.dot"
+  source="algos/aho_corasick/abb_ba_example.dot"
   fig_style="width: 80%"
 }
 ```
 
 # Trie Limitations
 
-Using the trie, we can find the keywords present in `abab` by starting at each character and
-checking whether a substring anchored there matches a keyword. These checks use four passes over
+Using the trie, we can find the keywords present in an input of `abba` by starting at each character
+and checking whether a substring anchored there matches a keyword. These checks use four passes over
 our input:
 
-#. start at index 0 and find `ab`, continue matching, and then find `aba`
-#. start at index 1 and find `bab`
-#. start at index 2 and find the second `ab`
+#. start at index 0 and find `ab`, continue matching, find `abb`
+#. start at index 1 and find no keywords
+#. start at index 2 and find `ba`
 #. start at index 3 and find no keywords
 
 Working through this ourselves, we can be much more efficient and check all the keywords in a single
 pass:
 
 * scan through index 2 and find `ab`
-* move to index 3 and find `aba`
-* move to index 4, remember we just saw `ba`, and find `bab` as well as the second `ab`
+* move to index 3 and find `abb`
+* move to index 4, remember we just saw `b`, and find `ba`
 
-By remembering our previous state, we only need a single scan. Is this always possible? If so, can
-we augment our trie to achieve something similar?
+By remembering our previous state, we avoid backtracking and only need a single scan. Is this
+always possible? If so, can we augment our trie to achieve something similar?
 
 (Spoiler: yes and yes, with Aho-Corasick)
 
@@ -54,8 +55,33 @@ The Aho-Corasick algorithm for string matching (named after its inventors, [Alfr
 [Margaret J. Corasick][corasick]), extends trie-based string matching by making it easier to re-use
 work when traversing the trie.
 
+The first question we need to answer is: How can we avoid backtracking?
+
 [aho]: https://en.wikipedia.org/wiki/Alfred_Aho
 [corasick]: https://dblp.org/pers/hd/c/Corasick:Margaret_J=
+
+## The failure function
+
+Our keywords are still `[ab, abb, ba]`. Let's pretend we're at the very beginning of the input
+text and we see a `c`. The only thing we can do is stay at the root node and wait for more input,
+so we'll add a loop for that.
+
+```{
+  .graphviz
+  #example_fail0
+  source="algos/aho_corasick/abb_ba_loop_example.dot"
+  fig_style="width: 80%"
+}
+```
+
+Now, let's pretend we've seen `ab`, and the next character is `a`, a mismatch. We want to end up
+at node $ba$. We could precompute all the suffixes for node $ab$ (`[b, ab]`) in order to find out
+that going to node $ab$ also includes going to node $b$, but there's a more efficient way.
+
+We got from node $a$ to node $ab$ when we saw a `b`. What if we went to wherever node $a$ would go
+for a mismatch and tried to match `b` there? This approach poses two questions:
+
+#. What do we do if trying to match `b` fails?
 
 The algorithm has three core components:
 
@@ -70,93 +96,67 @@ Constructing the goto function is essentially the same as constructing the trie 
 section! In addition, we also add a loop to the root node. At the root, any characters without a
 match will go back to the root instead of failing.
 
-```{
-  .graphviz
-  #example_loop
-  source="algos/aho_corasick/aba_bab_loop_example.dot"
-  fig_style="width: 80%"
-}
-```
-
 For now, we can declare victory and move on. However, the goto function will appear again when
 discussing the output function.
 
 ## The failure function
 
-## The output function
-
-above is the addition of a loopback edge on the root node for every character without an outgoing
-edge from the root. At this point, we've built the structure shown in **TODO: Fix this ref**\cref{fig:ac:goto}.
-
-## The failure function
-
-```{
-  .graphviz
-  #failure
-  source="algos/aho_corasick/failure.dot"
-  caption="The failure function in action"
-  animate="fail"
-}
-```
-
 The failure function is the meat of Aho-Corasick. It is responsible for letting us avoid redundant
-work in the search process by re-routing paths in the search graph when we find a character in the
-input with no matching outgoing edge from the current node (i.e. a character mismatch between the
-input and a keyword). Rather than returning to the root and starting again, the failure function
-tells us how to keep going without a full restart whenever possible.
+work while searching. Normally, with a trie, when we find a mismatched character, we have to go back
+to the root. The failure function works by re-routing mismatches to possibly matching nodes instead
+of having to completely restart.
 
-The failure function is defined recursively based on the goto function. For the first layer of the
-graph --- the set of nodes representing having matched a single character --- the failure function
-will always map back to the root. The intuition here is simple: If we have reached a failure state
-after matching a single character, then we can't possibly be in a prefix state for any other
-keywords and need to go back to the root.
-
-For subsequent layers, we compute the failure function inductively in terms of the failure function
-for the immediately preceding layer. This process works as follows:
-
-1. Consider all states in the preceding layer. For each state $r$, find every symbol $a$ with a
-   valid transition out of $r$ to some state $s$.
-2. For each $a$, follow the failure function from $r$ until reaching either the root or a state $t$
-   such that $t$ has a valid transition for $a$.
-3. Then, set the value of the failure function for $s$ to be the state $s^\prime$ reached by
-   transitioning with $a$ from $t$.
-4. Set the output function for state $s$ to be its original outputs combined with the outputs for
-   $s^\prime$.
-5. Continue for all other $r$ and $a$ in the layer, then move to the next layer.
-
-Intuitively, this process finds the next state in the search graph that could possibly be correct if
-the current character is actually part of another keyword. Merging the output sets in step (4) means
-that we don't miss keywords by taking these transitions, but also don't need to keep restarting the
-search for every character of the input. It's interesting to think about why there's only a single
-failure state for any given state --- try it! (Hint: think about what would happen if, after
-transitioning to the state specified by the failure function, we fail again on the next character.)
-
-## The output function
-
-Surprise! We have actually already constructed the output function through the previous two steps to
-construct the goto function and the failure function. The main difference from our output node
-labeling in the trie example is that the output function may now return multiple keywords for a
-single state. This is to let us maintain the correct output set when following failure transitions.
+Here's an example. Consider the following search graph for the keywords "ab" and "bc". Step through
+to see how the failure function lets us skip jumping back to the root on a character mismatch at
+node $ab$.
 
 ## Putting it all together
 
+**TODO: Are we going to have a figure here, showing the full search graph? I think it would be
+good**
 We've now built the structure shown in **TODO: Fix this ref**\cref{fig:ac:full}. How do we use it to
 match against an input text?
 
-This procedure is quite simple; we've done all the hard work already. We start at the first
+This procedure is straightforward; we've done all the hard work already. We start at the first
 character of the input text and the root node of the search graph. For each character, if there
 exists an outgoing transition from the current node in the goto function, we follow that transition.
 If there is no such transition, we follow the failure transition for the current node. After every
 transition, we advance our position in the input by one. At every state, we merge its (possibly
-empty) output set from the output function into our final, overall output, tracking the index in the
-input text to report the position of the match. That's it!
+empty) output set from the output function into our final output, tracking the index in the input
+text to report the position of the match. That's it!
 
-This process is very similar to how we searched for keywords using the trie. The difference is that,
+This process is similar to how we searched for keywords using the trie. The difference is that,
 thanks to the failure function, we only go back to the root of the search graph when we absolutely
 must, and we don't have to keep re-checking characters in the input. This makes our speed even
 better than the trie --- we now run in time $O(T)$, since we make one transition for each input
 character, once. Though we don't prove it here, it's not hard to show that the constant factor on
 this execution time is quite small --- less than two!
+
+# Conclusions and further reading
+
+There are still some parts of Aho-Corasick to explore, if you're interested. For one thing, though
+we reduced the search time complexity, what did we do to the time complexity for constructing the
+search graph? 
+
+You may also have a sense that we could do even better than the failure
+function --- why do we potentially have to make *multiple* failure transitions to find the right
+node on a mismatch? Why don't we just encode the correct transition for every possible mismatched
+character, making only a single jump on a mismatch? Good thinking! We can in fact do exactly this,
+constructing a **deterministic finite automaton** instead of a trie, and gaining further performance
+improvements.
+
+It may also be interesting to read about other string search algorithms, with other properties. A
+few to check out include
+[Knuth-Morris-Pratt](https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm)
+and [Boyer-Moore](https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore_string-search_algorithm) for
+single-pattern search, as well as
+[Commentz-Walter](https://en.wikipedia.org/wiki/Commentz-Walter_algorithm), which extends
+Boyer-Moore to the multiple-pattern case (like Aho-Corasick) and can out-perform Aho-Corasick.
+Beyond this, there's a host of interesting algorithms for fuzzy string search --- finding partial
+keyword matches in strings.
+
+If you want to read more about Aho-Corasick itself, check out the [original
+paper](https://cr.yp.to/bib/1975/aho.pdf).
 
 # Appendix
 

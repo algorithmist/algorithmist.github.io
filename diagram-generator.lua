@@ -45,6 +45,7 @@ function inline_svg(block)
   -- because onload events do not fire for divs or figures.
   if animate then
     svg = string.gsub(svg, '<svg', '<svg onload="' .. animate .. '()"', 1)
+    -- print(svg)
   end
 
   local figObj = nil

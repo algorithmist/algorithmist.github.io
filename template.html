@@ -18,7 +18,7 @@
     $else$
     <meta name="keywords" content="algorithms,tutorial,visualization" />
     $endif$
-    <title>The Algorithmist - $pagetitle$</title>
+    <title>The Algorithmist$if(pagetitle)$ - $pagetitle$$endif$</title>
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Raleway|Lato"
@@ -61,7 +61,9 @@
   <body>
     $for(include-before)$ $include-before$ $endfor$
     <header>
-      <a href="https://algorithmist.github.io" class="root-link"><h1>The Algorithmist</h1></a>
+      <a href="https://algorithmist.github.io" class="root-link"
+        ><h1>The Algorithmist</h1></a
+      >
       <h3>Advanced algorithms thoroughly explained</h3>
       <nav class="site-nav">
         <a href="/about.html">about</a>
@@ -70,24 +72,20 @@
         <a href="/recent">recent posts</a>
       </nav>
     </header>
-
     <main>
-      <h1 class="article-title">$title$</h1>
+      <h1 class="article-title">$title$$if(subtitle)$: $subtitle$$endif$</h1>
       $if(date)$
       <p class="date">$date$</p>
-      $endif$
-      $if(toc)$
-        $if(is_article)$
+      $endif$ $if(toc)$ $if(is_article)$
       <h2>Table of Contents</h2>
       <nav class="article-toc" id="$idprefix$TOC" role="article-toc">
         $table-of-contents$
       </nav>
-        $else$
+      $else$
       <nav class="doc-toc" id="$idprefix$TOC" role="doc-toc">
         $table-of-contents$
       </nav>
-        $endif$
-      $endif$
+      $endif$ $endif$
       <div class="article-content">
 $body$
       </div>

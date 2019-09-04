@@ -1,15 +1,20 @@
 /* Initial styles in case we're viewing the page without JS */
-#ab2a > path, #a2root > path, #root2b > path {
-  stroke: green;
-}
-
-#ab2a > polygon, #a2root > polygon, #root2b > polygon {
-  stroke: green;
-  fill: green;
-}
-
 #ab2b > path {
   stroke: red;
+}
+
+#fig\:example_fail0 #root_loop > path,
+#fig\:example_fail0 #root_loop > polygon {
+  stroke: red;
+}
+
+#fig\:example_fail0 #root_loop > text,
+#fig\:example_fail0 #root_loop > polygon {
+  fill: red;
+}
+
+#fig\:example_fail1 #ab > ellipse {
+  fill: red;
 }
 
 #ab2b > polygon {

@@ -4,15 +4,12 @@ digraph {
   root [id="root"];
   a [id="a"];
   ab [id="ab"];
-  aba [id="aba"];
+  abb [id="abb"];
   b [id="b"];
   ba [id="ba"];
-  bab [id="bab"];
   root -> a [xlabel="a"];
   a -> ab [xlabel="b"];
-  ab -> aba [xlabel="a"];
+  ab -> abb [xlabel="b"];
   root -> b [xlabel="b"];
   b -> ba [xlabel="a"];
-  ba -> bab [xlabel="b"];
-  root -> root [xlabel="[^ab]  "];
 }
