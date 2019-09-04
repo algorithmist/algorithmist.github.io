@@ -11,32 +11,48 @@ function dump(o)
   end
 end
 
-function CodeBlock(block)
+function inline_svg(block)
   -- Shows up with --log_level=DEBUG
   -- print('---')
   -- print(dump(block))
-  local svg = pandoc.pipe('dot', {'-Tsvg'}, block.text)
+  if block.attr.classes[1] ~= 'graphviz' then
+    return nil
+  end
+
+  local svg = nil
   local caption = nil
   local animate = nil
-  local name = nil
-  if block.attributes["caption"] then
+  local fig_style = nil
+  if block.attributes['source'] then
+    local source = block.attributes['source']
+    local metafile = io.open(source, 'r')
+    local content = metafile:read("*a")
+    svg = pandoc.pipe('dot', {'-Tsvg'}, content)
+  end
+  if block.attributes['caption'] then
     caption = block.attributes['caption']
   end
-  if block.attributes["animate"] then
+  if block.attributes['animate'] then
     animate = block.attributes['animate']
   end
-  if block.attributes['name'] then
-    name = block.attributes['name']
+  if block.attributes['fig_style'] then
+    fig_style = block.attributes['fig_style']
   end
+
+  local name = block.attr.identifier
 
   -- This is incredibly hacky. We should find a better way. We're only doing it
   -- because onload events do not fire for divs or figures.
   if animate then
     svg = string.gsub(svg, '<svg', '<svg onload="' .. animate .. '()"', 1)
-    print(svg)
   end
 
-  local figObj = pandoc.RawBlock('html', '<figure>\n\t' .. svg)
+  local figObj = nil
+  if fig_style then
+    figObj = pandoc.RawBlock('html', '<figure style="' .. fig_style .. '">\n\t' .. svg)
+  else
+    figObj = pandoc.RawBlock('html', '<figure>\n\t' .. svg)
+  end
   if caption then
     figObj.text = figObj.text .. '\t<figcaption>' .. caption .. '</figcaption>\n'
   end
@@ -61,5 +77,5 @@ function CodeBlock(block)
 end
 
 return {
-  {CodeBlock = CodeBlock},
+  {CodeBlock = inline_svg},
 }

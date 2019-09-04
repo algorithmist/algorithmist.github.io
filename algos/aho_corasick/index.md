@@ -5,126 +5,97 @@ title: "Aho-Corasick: Fast multi-keyword string search"
 # Introduction
 Many important computational applications rely on efficient string search. Malware detection,
 information retrieval, and gene sequencing (among others) require at their core checking for the
-presence of a large set of target strings in a large corpus of text. In this article, we will
-explain and implement the **Aho-Corasick** algorithm, a fast classical approach for finding keywords
-in an input string.
+presence of a large set of target strings in a large or unbounded corpus of text. In this article,
+we will explain and implement the **Aho-Corasick** algorithm, a fast streaming algorithm for finding
+keywords in an input text.
 
-## A naive approach to string search
+The article assumes some familiarity with tries. Wikipedia's [page][trie] has a good overview.
+There are also some additional examples in the [appendix](#appendix).
 
-Searching for a single string (keyword) in a corpus is straightforward: Iterate through the
-characters of the keyword and the corpus checking for matches. If you reach the end of the keyword,
-you've found the string. If two characters **don't** match, start over at the next start position in
-the corpus and the first character of the keyword. String search algorithms that simultaneously
-search for multiple keywords in a corpus are more interesting. A straightforward approach is to loop
-over the keywords and check if each one is in the text, just like in the single keyword case. Each
-individual check requires scanning the entire input text, giving a runtime of $O(KT)$, where $K$
-is the number of keywords and $T$ is the length of the text. If we have many keywords and/or a
-long text, this search algorithm will perform poorly. We can improve this by constructing a new
-approach that can check for many keywords at once.
+[trie]: https://en.wikipedia.org/wiki/Trie
 
-## Trie-ing harder: More efficient string matching
+Throughout this article, our working example will consist of the keywords `[ab, aba, bab]` and the
+input text `abab`. These keywords form this trie:
 
-```{.graphviz name="trie" style="width:100%;height:100%;" caption="A trie for the words \"tars, start, tsar, arts, art\""}
-digraph {
-  rankdir=LR;
-  root [id="root" keyword="True"];
-  t [id="t" keyword="True"];
-  ta [id="ta" keyword="True"];
-  tar [id="tar" keyword="False"];
-  tars [id="tars" keyword="False"];
-  ts [id="ts" keyword="True"];
-  tsa [id="tsa" keyword="False"];
-  tsar [id="tsar" keyword="False"];
-  s [id="s" keyword="True"];
-  st [id="st" keyword="True"];
-  sta [id="sta" keyword="True"];
-  star [id="star" keyword="False"];
-  start [id="start" keyword="False"];
-  a [id="a" keyword="True"];
-  ar [id="ar" keyword="True"];
-  art [id="art" keyword="False"];
-  arts [id="arts" keyword="False"];
-  root -> a [label="a"];
-  root -> s [label="s"];
-  root -> t [label="t"];
-  t -> ts [label="s"];
-  t -> ta [label="a"];
-  ta -> tar [label="r"];
-  tar -> tars [label="s"];
-  ts -> tsa [label="a"];
-  tsa -> tsar [label="r"];
-  s -> st [label="t"];
-  st -> sta [label="a"];
-  sta -> star [label="r"];
-  star -> start [label="t"];
-  a -> ar [label="r"];
-  ar -> art [label="t"];
-  art -> arts [label="s"];
+```{
+  .graphviz
+  #example_trie
+  source="algos/aho_corasick/aba_bab_example.dot"
+  fig_style="width: 80%"
 }
 ```
 
-As a first effort, we can use a **[trie](https://en.wikipedia.org/wiki/Trie)** to make a single scan
-of the text and simultaneously check for every keyword at once. A trie is a tree representing a
-collection of keys. Each path from the root to a node represents the prefix of at least one key,
-signified by the labels of the edges moving between nodes. Each node stores whether it signifies the
-end of a full keyword: that is, if the path from the root to that node spells out a complete
-keyword. We’ll call the nodes for which this is true __output nodes__. We can now search for
-keywords in the input text by traversing the tree starting from each character of the input text in
-sequence.
+# Trie Limitations
 
-This version of the search algorithm has a complexity of $O(LT)$, where $L$ is the length of the
-longest keyword. This is better than what we had before --- in most practical cases, the number of
-keywords will be much larger than the length of the longest keyword (i.e. $K \gg L$). However,
-there's still room for improvement. Consider what happens when we reach an input character with no
-matches, or reach a leaf node: We have to go back to the root and back to only a single character
-further in the input than our last start position. This means that we perform lots of redundant
-traversals of the trie, and thus that our algorithm is slower than it has to be. What if we could
-remember the progress we've already made and use it to shortcut through the trie, avoiding
-backtracking? This is the core insight of the Aho-Corasick algorithm.
+Using the trie, we can find the keywords present in `abab` by starting at each character and
+checking whether a substring anchored there matches a keyword. These checks use four passes over
+our input:
+
+#. start at index 0 and find `ab`, continue matching, and then find `aba`
+#. start at index 1 and find `bab`
+#. start at index 2 and find the second `ab`
+#. start at index 3 and find no keywords
+
+Working through this ourselves, we can be much more efficient and check all the keywords in a single
+pass:
+
+* scan through index 2 and find `ab`
+* move to index 3 and find `aba`
+* move to index 4, remember we just saw `ba`, and find `bab` as well as the second `ab`
+
+By remembering our previous state, we only need a single scan. Is this always possible? If so, can
+we augment our trie to achieve something similar?
+
+(Spoiler: yes and yes, with Aho-Corasick)
 
 # The Aho-Corasick Algorithm
 
-The Aho-Corasick algorithm for string matching (named after its inventors, [Alfred V.
-Aho](https://en.wikipedia.org/wiki/Alfred_Aho) and [Margaret J.
-Corasick](https://dblp.org/pers/hd/c/Corasick:Margaret_J=)), extends trie-based string matching by
-making it easier to re-use work in traversing the trie. We'll need three core components to do this:
-the *goto function*, which is similar to the existing graph structure of the trie and handles normal
-transitions, the *failure function*, which tells us how to avoid restarting entirely when a match
-fails, and the *output function*, which allows us to encode multiple matches from a single trie
-traversal.
+The Aho-Corasick algorithm for string matching (named after its inventors, [Alfred V. Aho][aho] and
+[Margaret J. Corasick][corasick]), extends trie-based string matching by making it easier to re-use
+work when traversing the trie.
+
+[aho]: https://en.wikipedia.org/wiki/Alfred_Aho
+[corasick]: https://dblp.org/pers/hd/c/Corasick:Margaret_J=
+
+The algorithm has three core components:
+
+* the *goto function*, $g(\star, c)$, which says where to go if we're at location $\star$ in the
+  trie and see the character $c$. The goto function either returns another location or fails.
+* the *failure function*, $f(\star)$, which tells us where to go if $g(\star, c)$ fails.
+* the *output function*, $o(\star)$, which says which keywords are matched at location $\star$.
 
 ## The goto function
 
-Constructing the goto function is actually the same as constructing the trie in the preceding
-section! **NOTE/TODO: We don't actually say how to do this in the preceding section.**
-There is one minor difference pertaining to how we handle output nodes. Instead of labelling a node
-terminating the path for a keyword as an output node, we instead add a reference to this node and
-the corresponding keyword to the output function (described [below](#the_output_function)). The
-reason for this will become clear once we explain the construction of the failure function, which
-also contributes elements to the output function. The final difference from the trie construction
+Constructing the goto function is essentially the same as constructing the trie in the preceding
+section! In addition, we also add a loop to the root node. At the root, any characters without a
+match will go back to the root instead of failing.
+
+```{
+  .graphviz
+  #example_loop
+  source="algos/aho_corasick/aba_bab_loop_example.dot"
+  fig_style="width: 80%"
+}
+```
+
+For now, we can declare victory and move on. However, the goto function will appear again when
+discussing the output function.
+
+## The failure function
+
+## The output function
+
 above is the addition of a loopback edge on the root node for every character without an outgoing
 edge from the root. At this point, we've built the structure shown in **TODO: Fix this ref**\cref{fig:ac:goto}.
 
 ## The failure function
 
-```{.graphviz name="failure" caption="The failure function in action" animate="fail"} 
-digraph {
-  splines=true;
-  rankdir=LR;
-  root [id="root"];
-  a [id="a"];
-  ab [id="ab"];
-  b [id="b"];
-  bc [id="bc"];
-  root -> a [xlabel="a"];
-  a -> ab [xlabel="b"];
-  root -> b [xlabel="b"];
-  b -> bc [xlabel="c"];
-
-  ab:n -> a:ne [id="ab2a" constraint=false];
-  a:n -> root:n [id="a2root" constraint=false];
-  root:s -> b:s [id="root2b" constraint=false];
-  ab -> b [id="ab2b" constraint=false];
+```{
+  .graphviz
+  #failure
+  source="algos/aho_corasick/failure.dot"
+  caption="The failure function in action"
+  animate="fail"
 }
 ```
 
@@ -187,5 +158,50 @@ better than the trie --- we now run in time $O(T)$, since we make one transition
 character, once. Though we don't prove it here, it's not hard to show that the constant factor on
 this execution time is quite small --- less than two!
 
-# Conclusions and further reading
-** TODO: Add wrap-up paragraph**
+# Appendix
+
+We'll be using Python throughout the appendix.
+
+## Trie construction
+
+```python
+def build_trie(keywords):
+  root = {}
+  for keyword in keywords:
+    current = root
+    for c in keyword:
+      if c not in current:
+        current[c] = {}
+      current = current[c]
+    # Sentinel value. Only present if a
+    # keyword ends at this node.
+    current[None] = True
+  return root
+```
+
+## Matching with the trie
+
+```python
+def match(trie, input_text):
+  current, match, matches = trie, '', []
+  for c in input_text:
+    if c not in current:
+      return None
+    match += c
+    if None in current:
+      matches.append(match)
+    current = current[c]
+  return matches
+```
+
+## Searching an entire text
+
+```python
+def search(keywords, input_text):
+  trie = build_trie(keywords)
+  matches = []
+  for i, _ in enumerate(input_text):
+    new_matches = match(trie, input_text[i:])
+    matches.extend(new_matches)
+  return matches 
+```
