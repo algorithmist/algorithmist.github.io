@@ -1,0 +1,13 @@
+digraph {
+  splines=true;
+  rankdir=LR;
+  root [id="root"];
+  a [id="a"];
+  ab [id="ab"];
+  b [id="b"];
+  bc [id="bc"];
+  root -> a [xlabel="a"];
+  a -> ab [xlabel="b"];
+  root -> b [xlabel="b"];
+  b -> bc [xlabel="c"];
+}

@@ -18,13 +18,17 @@
     $else$
     <meta name="keywords" content="algorithms,tutorial,visualization" />
     $endif$
-    <title>The Algorithmist - $pagetitle$</title>
+    <title>The Algorithmist$if(pagetitle)$ - $pagetitle$$endif$</title>
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Raleway|Arimo"
+      href="https://fonts.googleapis.com/css?family=Raleway|Lato"
       type="text/css"
     />
     <link rel="stylesheet" href="/css/styles.css" type="text/css" />
+    $if(is_article)$
+    <link rel="stylesheet" href="article.css" type="text/css" />
+    <script src="article.js"></script>
+    $endif$
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/katex@0.10.1/dist/katex.min.css"
@@ -51,37 +55,39 @@
         }
       });
     </script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css"
-    />
     $for(header-includes)$ $header-includes$ $endfor$
   </head>
 
   <body>
     $for(include-before)$ $include-before$ $endfor$
     <header>
-      <h1>The Algorithmist</h1>
+      <a href="https://algorithmist.github.io" class="root-link"
+        ><h1>The Algorithmist</h1></a
+      >
       <h3>Advanced algorithms thoroughly explained</h3>
-      <nav>
-        <a href="about.html">about</a>
-        <a href="contributions.html">contribute</a>
+      <nav class="site-nav">
+        <a href="/about.html">about</a>
+        <a href="/contributions.html">contribute</a>
         <a href="/categories">categories</a>
         <a href="/recent">recent posts</a>
       </nav>
     </header>
-
     <main>
-      <h1 class="article-title">$title$</h1>
+      <h1 class="article-title">$title$$if(subtitle)$: $subtitle$$endif$</h1>
       $if(date)$
       <p class="date">$date$</p>
-      $endif$ $if(toc)$
-      <nav id="$idprefix$TOC" role="doc-toc">
+      $endif$ $if(toc)$ $if(is_article)$
+      <h2>Table of Contents</h2>
+      <nav class="article-toc" id="$idprefix$TOC" role="article-toc">
         $table-of-contents$
       </nav>
-      $endif$
+      $else$
+      <nav class="doc-toc" id="$idprefix$TOC" role="doc-toc">
+        $table-of-contents$
+      </nav>
+      $endif$ $endif$
       <div class="article-content">
-        $body$
+$body$
       </div>
     </main>
     $for(include-after)$ $include-after$ $endfor$

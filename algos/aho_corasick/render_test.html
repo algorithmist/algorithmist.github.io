@@ -1,41 +1,92 @@
-<html>
-  <head>
-    <meta charset="utf-8">
-    <script src="https://d3js.org/d3.v5.js"></script>
-    <script src="https://dagrejs.github.io/project/dagre-d3/latest/dagre-d3.min.js"></script>
-    <script src="render.js"></script>
-  <style>
-    .node {
-      stroke: #000000;
-      fill: #ffffff;
-    }
-    .node-root {
-      stroke: #00ff00;
-    }
-    .node-keyword {
-      stroke: #ff0000;
-    }
-    .edgePath {
-      stroke: #000000;
-      stroke-width: 1.5px;
-    }
-    text {
-      font-weight: 300;
-      font-family: sans-serif;
-      font-size: 14px;
-    }
-  </style>
-  </head>
-  <body>
-  <svg id="test1" width=960 height=600></svg>
+<meta charset="utf-8">
+
 <script>
+  var noop = function(color) {};
+  var path = [
+    "ab",
+    "ab2a",
+    "a",
+    "a2root",
+    "root",
+    "root2b",
+    "b"
+  ];
+  var elems = [noop];
 
-var trie = new Trie();
-trie.addWord('abb');
-trie.addWord('abc');
-trie.addWord('abed');
-renderTrie(trie, "#test1");
+  var fail;
+  function foo() {
+    var prev = document.getElementById("prev");
+    prev.disabled = false;
+    var next = document.getElementById("next");
+    next.disabled = false;
 
+    fail = document.getElementById("failure");
+
+    for (let i in path) {
+      let g = fail.contentDocument.getElementById(path[i]);
+      let f = null;
+      if (g.getAttribute("class") === "node") {
+        let ellipse = g.getElementsByTagName("ellipse")[0];
+        f = function(color) {
+          if (color === "black") {
+            ellipse.style.fill = "none";
+          } else {
+            ellipse.style.fill = color;
+          }
+        }
+      } else {
+        // Edge
+        let path = g.getElementsByTagName("path")[0];
+        let polygon = g.getElementsByTagName("polygon")[0];
+        f = function(color) {
+          path.style.stroke = color;
+          polygon.style.fill = color;
+          polygon.style.stroke = color;
+        };
+      }
+      elems.push(f);
+    }
+
+    // End by adding the dummy item to the list.
+    elems.push(noop);
+  }
+  var curr = 0;
+  function forward() {
+    if (fail == null) {
+      return;
+    }
+
+    elems[curr]("black");
+
+    curr += 1;
+    if (curr == elems.length) {
+      curr = elems.length - 1;
+    }
+
+    elems[curr]("red");
+  }
+
+  function backward() {
+    if (fail == null) {
+      return;
+    }
+
+    elems[curr]("black");
+
+    curr -= 1;
+    if (curr == -1) {
+      curr = 0;
+    }
+
+    elems[curr]("red");
+  }
 </script>
-  </body>
-</html>
+
+<div>
+  <object id="failure" data="failure.svg" type="image/svg+xml" onload="foo()"></object>
+</div>
+<button id="prev" disabled="true" onclick="backward()">&#8249</button>
+<button id="next" disabled="true" onclick="forward()">&#8250</button>
+
+<script>
+</script>

@@ -10,6 +10,7 @@ import shutil
 import subprocess
 
 logger = logging.getLogger(__name__)
+
 LOGGING_LEVELS = {
   'NOTSET': logging.NOTSET,
   'DEBUG': logging.DEBUG,
@@ -18,6 +19,7 @@ LOGGING_LEVELS = {
   'ERROR': logging.ERROR,
   'CRITICAL': logging.CRITICAL,
 }
+
 DEFAULT_PANDOC_FLAGS = [
   '-s',
   '--template=template.html',
@@ -28,6 +30,7 @@ DEFAULT_PANDOC_FLAGS = [
 
 
 def run(*args) -> str:
+  '''Helper function to run external commands, i.e. pandoc'''
   logging.debug('Running command: %s', args)
   result = subprocess.run(args,
                           stdout=subprocess.PIPE,
@@ -37,41 +40,50 @@ def run(*args) -> str:
   return result
 
 
-def OutputHtml(input_path, output_path, pandoc_flags):
+def output_html(input_path, output_path, pandoc_flags):
+  '''Run pandoc to process a single Markdown file into HTML'''
   # TODO: Process multiple files concurrently.
   logging.info('Reading from %s\nWriting to %s', input_path, output_path)
   args = (['pandoc'] + DEFAULT_PANDOC_FLAGS + pandoc_flags +
-          [input_path, '-o', output_path])
+          [input_path, '-o', output_path, '-f', 'markdown', '-t', 'html'])
   run(*args)
 
 
-def GenerateDocs(site_root: str, doc_paths: Iterator[str],
-                 pandoc_flags: List[str]):
+def generate_docs(site_root: str, doc_paths: Iterator[str],
+                  pandoc_flags: List[str]):
+  '''Generate documentation files: Contributing and About pages'''
   for doc_path in doc_paths:
     output_path = os.path.join(site_root,
                                os.path.basename(doc_path)[:-2] + 'html')
-    OutputHtml(doc_path, output_path, pandoc_flags)
+    output_html(doc_path, output_path, pandoc_flags)
 
 
-def GeneratePosts(site_root: str, post_dirs: Iterator[os.DirEntry],
-                  pandoc_flags: List[str]):
+def generate_posts(site_root: str, post_dirs: Iterator[os.DirEntry],
+                   pandoc_flags: List[str]):
+  '''Generate all algorithm post pages'''
   for post_dir in post_dirs:
     output_dir = os.path.join(site_root, post_dir.name)
     os.makedirs(output_dir, exist_ok=True)
     # Compile all the markdown to html. Copy everything else.
     post_files = glob.iglob(os.path.join(post_dir.path, '*'))
     for input_path in post_files:
+      logging.info('Processing %s', input_path)
       (name, ext) = os.path.splitext(os.path.basename(input_path))
       if name.endswith('test'):
         continue
       output_path = os.path.join(output_dir, name)
       if ext == '.md':
-        OutputHtml(input_path, output_path + '.html', pandoc_flags)
+        output_html(
+          input_path, output_path + '.html', pandoc_flags + [
+            '--toc',
+            '--extract-media=%s' % output_path, '--variable=is_article:true'
+          ])
       else:
         shutil.copy2(input_path, output_path + ext)
 
 
-def CopyFiles(input_dir: str, site_root: str, glob_expr: str):
+def copy_files(input_dir: str, site_root: str, glob_expr: str):
+  '''Copy static files to the output directory'''
   output_dir = os.path.join(site_root, input_dir)
   os.makedirs(output_dir, exist_ok=True)
   input_files = glob.iglob(os.path.join(input_dir, glob_expr))
@@ -79,7 +91,8 @@ def CopyFiles(input_dir: str, site_root: str, glob_expr: str):
     shutil.copy2(input_file, output_dir)
 
 
-def ParseArgs():
+def parse_args():
+  '''Parse command-line arguments'''
   parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
   parser.add_argument('--posts',
@@ -109,26 +122,28 @@ def ParseArgs():
   return parser.parse_args()
 
 
-def IsRootDir():
+def is_root_dir():
+  '''Helper function to test if we're in the root directory'''
   root_dir = run('git', 'rev-parse', '--show-toplevel').stdout.strip()
   return root_dir == os.getcwd()
 
 
 def main():
-  args = ParseArgs()
+  '''Main point of entry'''
+  args = parse_args()
   logger.root.setLevel(LOGGING_LEVELS[args.log_level])
-  if not IsRootDir():
+  if not is_root_dir():
     logging.error('Must be run from the root git directory')
     return
   pandoc_flags = [arg for arg in args.pandoc_flags.split(' ') if arg]
   # Output algos/algo_name/*.md as site_root/algo_name/*.html
   post_dirs = [path for path in os.scandir(args.posts) if path.is_dir()]
-  GeneratePosts(args.site_root, post_dirs, pandoc_flags)
+  generate_posts(args.site_root, post_dirs, pandoc_flags)
   # Output docs/*.md as site_root/*.html
   doc_paths = glob.iglob(os.path.join(args.docs, '*.md'))
-  GenerateDocs(args.site_root, doc_paths, pandoc_flags)
+  generate_docs(args.site_root, doc_paths, pandoc_flags)
   # Copy css into site_root/css
-  CopyFiles(args.css, args.site_root, '*.css')
+  copy_files(args.css, args.site_root, '*.css')
 
 
 if __name__ == '__main__':

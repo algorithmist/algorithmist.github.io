@@ -1,0 +1,40 @@
+/* Initial styles in case we're viewing the page without JS */
+#ab2b > path {
+  stroke: red;
+}
+
+#fig\:example_fail0 #root_loop > path,
+#fig\:example_fail0 #root_loop > polygon {
+  stroke: red;
+}
+
+#fig\:example_fail0 #root_loop > text,
+#fig\:example_fail0 #root_loop > polygon {
+  fill: red;
+}
+
+#fig\:example_fail1 #ab > ellipse {
+  fill: red;
+}
+
+#ab2b > polygon {
+  stroke: red;
+  fill: red;
+}
+
+button {
+  visibility: hidden;
+  padding: 1%;
+  font-family: inherit;
+  font-size: 100%;
+  margin: 0;
+  margin-top: 0.75em;
+}
+
+button, [type="button"] {
+  -webkit-appearance: button;
+}
+
+button + button {
+  margin-left: 10%;
+}
